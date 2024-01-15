@@ -1,26 +1,37 @@
 import os
 import time
 import pygame 
+import math
 
-class Player():
+class Player(pygame.sprite.Sprite):
 
-    def __init__(self, game):
+    def __init__(self, game, group):
+        super().__init__(group)
         self.game = game 
-        self.load_sprites()
+        self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
+
         self.x = 64
         self.y = 256
+        self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. A rectangle cannot be made easily without an image first. 
+        self.rect = self.image_holder.get_rect(center = (self.x, self.y))
+        self.group = group
+        self.speed = 100
+        self.direction = pygame.math.Vector2()
+
+        
+        self.load_sprites()
         self.current_frame = 0
         self.previous_frame_update = 0
     
     def update(self, delta_time, actions):
         #Get direction
-        direction_x = actions["right"] - actions["left"]
-        direction_y = actions["down"] - actions["up"]
+        self.direction.x = actions["right"] - actions["left"]
+        self.direction.y = actions["down"] - actions["up"]
         #Update location
-        self.x += 100 * delta_time *direction_x
-        self.y += 100 * delta_time *direction_y
+        self.x += self.speed * delta_time * self.direction.x
+        self.y += self.speed  * delta_time * self.direction.y
         #Animate the player
-        self.animate(delta_time, direction_x, direction_y)
+        self.animate(delta_time, self.direction.x, self.direction.y)
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y)) 
