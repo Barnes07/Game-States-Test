@@ -9,15 +9,22 @@ from map_generation.cellular_automata import CellularAutomata
 class Game_World(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.grass_image = pygame.image.load(os.path.join(self.game.assets_dir, "map", "grass.png"))
-        self.wall_image = pygame.image.load(os.path.join(self.game.assets_dir, "map", "wall.png"))
         self.camera_group = CameraGroup(self.game)
         self.player = Player(self.game, self.camera_group)
         
 
 
         #Jungle Map
-        
+        self.jungle_map_height = self.game.SCREEN_WIDTH * 3
+        self.jungle_map_width = self.game.SCREEN_WIDTH * 3
+        self.jungle_actual_map_height = self.jungle_map_height//self.game.block_size
+        self.jungle_actual_map_width = self.jungle_map_width//self.game.block_size
+        self.jungle_iterations = 10
+        self.jungle_wall_density = 48
+        self.jungle_wall_count_variable = 3
+        self.jungle_map = CellularAutomata(self.jungle_map_height, self.jungle_map_width, self.jungle_actual_map_height, self.jungle_actual_map_width, self.jungle_iterations, self.jungle_wall_density, self.jungle_wall_count_variable, self.camera_group, self.game)
+        self.jungle_map = self.jungle_map.Generate_CA_Map()
+        print(self.jungle_map)
 
     def update(self, delta_time, actions):
         if actions["escape"]:
@@ -28,7 +35,7 @@ class Game_World(State):
     
     def render(self, display):
         display.fill("black")
-        display.blit(self.grass_image, (0,0))
-        #self.player.render(display) old line of code which allows the player to move freely (not centred on screen)
+        
         self.camera_group.render(display, self.player)
+        self.player.render(display) #old line of code which allows the player to move freely (not centred on screen)
 

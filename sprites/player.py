@@ -34,7 +34,9 @@ class Player(pygame.sprite.Sprite):
         self.animate(delta_time, self.direction.x, self.direction.y)
 
     def render(self, display):
-        display.blit(self.current_image, (self.x, self.y)) 
+        display.blit(self.current_image, (self.x, self.y))
+
+    
 
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 

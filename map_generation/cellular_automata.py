@@ -1,15 +1,23 @@
 import random
+
 from map_generation.map_generator import MapGernerator
+from sprites.floor import Floor
+from sprites.wall import Wall
+
 
 
 class CellularAutomata(MapGernerator):
-    def __init__(self, map_height, map_width, actual_map_height, actual_map_width, iterations, wall_density, wall_count):
+    def __init__(self, map_height, map_width, actual_map_height, actual_map_width, iterations, wall_density, wall_count_variable, camera_group, game):
         super().__init__(map_height, map_width, actual_map_height, actual_map_width)
         self.noise_grid = []
         self.final_map = []
         self.iterations = iterations
         self.wall_density = wall_density
-        self.wall_count = wall_count
+        self.wall_count_variable = wall_count_variable
+        
+        self.game = game
+        self.camera_group = camera_group
+        self.block_size = self.game.block_size
 
     def GenerateNoiseGrid(self):
         for X in range(0,self.actual_map_width):
@@ -36,26 +44,26 @@ class CellularAutomata(MapGernerator):
                                         WallCount = WallCount + 1
                         else: 
                             WallCount = WallCount + 1
-                        if WallCount > self.wall_count:
+                        if WallCount > self.wall_count_variable:
                             self.noise_grid[a][b] = 0
                         else:
                             self.noise_grid[a][b] = 1
 
-        self.final_mapap = self.noise_grid
+        self.final_map = self.noise_grid
 
     def FillMap(self):
         for x in range(0,self.actual_map_height):
             for y in range(0,self.actual_map_height):
                 if self.final_map[x][y] == 0:
                     #load wall class
-                    WallSprite = Wall(x*BlockSize + BlockSize//2 , y*BlockSize + BlockSize//2, CameraGroup)
+                    WallSprite = Wall(x*self.block_size + self.block_size//2 , y*self.block_size + self.block_size//2, self.camera_group, self.game)
                     #WallGroup.add(WallSprite)
                     #The x coordinate is multiplied by Blocksize so that the blocks are not rendered ontop of eachother
                     #"BlockSize//2" is then added to each coordinate as the rectangle is rendered by the center and the left-hand edegs of the map would therefore not fit onto the screen
                     
                 elif self.final_map[x][y] == 1:
                     #load floor class
-                    Floor(x*BlockSize+ BlockSize//2, y*BlockSize+ BlockSize//2, CameraGroup)
+                    Floor(x*self.block_size+ self.block_size//2, y*self.block_size+ self.block_size//2, self.camera_group, self.game)
                     ##Need to change this so that the ground is rendered once and covers the whole screen with the walls chnaging position over it to imporve perfomance 
     
     def FillTop(self):  #This function fills the top row with floors to prevent awkward diaganol strips. Screenshot saved in "Screenshots"
