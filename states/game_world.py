@@ -10,7 +10,7 @@ class Game_World(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.camera_group = CameraGroup(self.game)
-        self.player = Player(self.game, self.camera_group)
+        
         
 
 
@@ -26,6 +26,8 @@ class Game_World(State):
         self.jungle_map = self.jungle_map.Generate_CA_Map()
         print(self.jungle_map)
 
+        self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
+
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
@@ -37,5 +39,5 @@ class Game_World(State):
         display.fill("black")
         
         self.camera_group.render(display, self.player)
-        self.player.render(display) #old line of code which allows the player to move freely (not centred on screen)
+        #self.player.render(display) #old line of code which allows the player to move freely (not centred on screen)
 

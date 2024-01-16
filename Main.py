@@ -14,7 +14,7 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH,self.SCREEN_HEIGHT), pygame.SCALED, vsync=1)
         self.running = True
         self.playing = True
-        self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False, "action1": False}
+        self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False, "action1": False, "flute": False}
         self.delta_time = 0
         self.previous_time = 0
         self.states_stack = [] #Check clip for why stacks are used
@@ -54,6 +54,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                     self.actions["start"] = True
                 if event.key == pygame.K_o:
                     self.actions["action1"] = True
+                if event.key == pygame.K_f:
+                    self.actions["flute"] = True
             if event.type == pygame.KEYUP:
                 #Setting all actions to False when released
                 if event.key == pygame.K_ESCAPE:
@@ -70,6 +72,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                     self.actions["start"] = False 
                 if event.key == pygame.K_o:
                     self.actions["action1"] = False
+                if event.key == pygame.K_f:
+                    self.actions["flute"] = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #Setting value of mouse click
                 self.actions["click"] = True

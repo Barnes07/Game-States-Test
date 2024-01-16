@@ -30,11 +30,14 @@ class Player(pygame.sprite.Sprite):
         #Update location
         self.x += self.speed * delta_time * self.direction.x
         self.y += self.speed  * delta_time * self.direction.y
+        self.rect.centerx += self.speed * delta_time * self.direction.x #these two lines are needed to also update the x and y coordinates of the rectangle so that the x and y coordinates in the centre_player method(camera_group)are updated and allow the assets to move in the opposite direction to the player. 
+        self.rect.centery += self.speed * delta_time * self.direction.y
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y))
+        
 
     
 

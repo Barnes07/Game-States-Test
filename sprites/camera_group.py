@@ -10,8 +10,9 @@ class CameraGroup(pygame.sprite.Group):
         self.HalfHeight = self.game.SCREEN_HEIGHT//2
 
     def centre_player(self, player):
-        self.CameraOffset.x = player.self.rect.centerx - self.HalfWidth
-        self.CameraOffset.y = player.self.rect.centery - self.HalfHeight
+        self.CameraOffset.x = player.rect.centerx - self.HalfWidth
+        self.CameraOffset.y = player.rect.centery - self.HalfHeight
+        
         #To keep the player central on the screen, they need to be at a position that is half the width and height of the surface
         #The above function keeps the player in the centre (watch https://www.youtube.com/watch?v=u7LPRqrzry8 from 15:30
         
