@@ -2,6 +2,7 @@ import os
 import time
 import pygame 
 import math
+from sprites.wall import Wall
 
 class Player(pygame.sprite.Sprite):
 
@@ -34,6 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery += self.speed * delta_time * self.direction.y
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
+
+        #checks
+        self.check_wall_collision(delta_time)
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y))
@@ -81,6 +85,13 @@ class Player(pygame.sprite.Sprite):
         #Set the default frames for when idle
         self.current_image = self.up_sprites[0]
         self.current_animation_list = self.up_sprites
+    
+    def check_wall_collision(self, delta_time):
+        for sprite in self.group.sprites():
+            Check = isinstance(sprite, Wall)      #"isinstance" is a function that returns a boolean value depending on whether the firsts parameter is of the class type mentioned in the second parameter
+            if Check == True:
+                if pygame.sprite.collide_rect(self, sprite):
+                    self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
 
 
         
