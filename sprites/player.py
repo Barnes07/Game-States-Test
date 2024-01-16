@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. A rectangle cannot be made easily without an image first. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
-        self.speed = 100
+        self.speed = 200
         self.direction = pygame.math.Vector2()
 
         

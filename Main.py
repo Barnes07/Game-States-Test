@@ -78,7 +78,9 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                 #Setting value of mouse click
                 self.actions["click"] = True
                 self.actions["mouse_pos"] = pygame.mouse.get_pos()
-                
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.actions["click"] = False
+
 
 
 
