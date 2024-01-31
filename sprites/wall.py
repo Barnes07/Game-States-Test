@@ -9,3 +9,5 @@ class Wall(pygame.sprite.Sprite):
         self.game = game
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "map", "wall.png")).convert_alpha().convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
+
+        

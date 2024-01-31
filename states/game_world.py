@@ -10,11 +10,11 @@ class Game_World(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.camera_group = CameraGroup(self.game)
-        
-        
 
-
+        
         #Jungle Map
+        #Potential isometric implementation https://www.youtube.com/watch?v=gE2gTCwLdFM
+        
         self.jungle_map_height = self.game.SCREEN_WIDTH * 3
         self.jungle_map_width = self.game.SCREEN_WIDTH * 3
         self.jungle_actual_map_height = self.jungle_map_height//self.game.block_size
@@ -37,7 +37,6 @@ class Game_World(State):
     
     def render(self, display):
         display.fill("black")
-        
         self.camera_group.render(display, self.player)
         #self.player.render(display) #old line of code which allows the player to move freely (not centred on screen)
 

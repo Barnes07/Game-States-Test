@@ -10,41 +10,17 @@ class Player(pygame.sprite.Sprite):
         super().__init__(group)
         self.game = game 
         self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
-
         self.x = 64
         self.y = 256
-        self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. A rectangle cannot be made easily without an image first. 
+        self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
         self.speed = 200
         self.direction = pygame.math.Vector2()
-
-        
         self.load_sprites()
         self.current_frame = 0
         self.previous_frame_update = 0
     
-    def update(self, delta_time, actions):
-        #Get direction
-        self.direction.x = actions["right"] - actions["left"]
-        self.direction.y = actions["down"] - actions["up"]
-        #Update location
-        self.x += self.speed * delta_time * self.direction.x
-        self.y += self.speed  * delta_time * self.direction.y
-        self.rect.centerx += self.speed * delta_time * self.direction.x #these two lines are needed to also update the x and y coordinates of the rectangle so that the x and y coordinates in the centre_player method(camera_group)are updated and allow the assets to move in the opposite direction to the player. 
-        self.rect.centery += self.speed * delta_time * self.direction.y
-        #Animate the player
-        self.animate(delta_time, self.direction.x, self.direction.y)
-
-        #checks
-        self.check_wall_collision(delta_time)
-
-    def render(self, display):
-        display.blit(self.current_image, (self.x, self.y))
-        
-
-    
-
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
         self.previous_frame_update += delta_time
@@ -93,5 +69,19 @@ class Player(pygame.sprite.Sprite):
                 if pygame.sprite.collide_rect(self, sprite):
                     self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
 
+    def update(self, delta_time, actions):
+        #Get direction
+        self.direction.x = actions["right"] - actions["left"]
+        self.direction.y = actions["down"] - actions["up"]
+        #Update location
+        self.x += self.speed * delta_time * self.direction.x
+        self.y += self.speed  * delta_time * self.direction.y
+        self.rect.centerx += self.speed * delta_time * self.direction.x #these two lines are needed to also update the x and y coordinates of the rectangle so that the x and y coordinates in the centre_player method(camera_group)are updated and allow the assets to move in the opposite direction to the player. 
+        self.rect.centery += self.speed * delta_time * self.direction.y
+        #Animate the player
+        self.animate(delta_time, self.direction.x, self.direction.y)
+        #checks
+        self.check_wall_collision(delta_time)
 
-        
+    def render(self, display):
+        display.blit(self.current_image, (self.x, self.y))

@@ -6,7 +6,7 @@ from states.game_world import Game_World
 from states.settings_menu import SettingsMenu
 from states.leaderboard_menu import LeaderboardMenu
 
-class Title(State):
+class Main_Menu(State):
     def __init__(self, game):
         State.__init__(self,game)
         #Setting the menu
@@ -18,7 +18,8 @@ class Title(State):
 
         self.play_button = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)-125, (self.game.SCREEN_HEIGHT)-75, 215, 100, "Play game", "white", "black")
         self.play_button_rect = pygame.Rect((self.game.SCREEN_WIDTH)-125, (self.game.SCREEN_HEIGHT)-75, 215, 100)
-        #self.play_button_rect is initialised using left and top coordinates. However, to ensure that the rectangle is alligned with the text box, a self.play_button_rect.center variable is defined so that the rectangle is perfectly alligned with the text box for perfect collsions with the mouse for when the player whishes to select an option
+        #self.play_button_rect is initialised using left and top coordinates. However, to ensure that the rectangle is alligned with the text box, 
+        #a self.play_button_rect.center variable is defined so that the rectangle is perfectly alligned with the text box for perfect collsions with the mouse for when the player whishes to select an option
         self.play_button_rect.center = ((self.game.SCREEN_WIDTH)-125, (self.game.SCREEN_HEIGHT)-75)
 
         self.settings_button = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)-125, (self.game.SCREEN_HEIGHT)-185, 215, 100, "Settings", "white", "black")
@@ -40,7 +41,8 @@ class Title(State):
         elif self.menu_options[self.index] == "Settings":
             new_state = SettingsMenu(self.game)
             new_state.enter_state()
-            self.index = 0 #Encourntered a problem where self.index was still equal to the settinsg menu, which resulted in the program wanting to consistently open the settings window even after the settings window was close. (remove this line to see it in action)
+            self.index = 0 #Encourntered a problem where self.index was still equal to the settinsg menu, which resulted in the program wanting to consistently 
+            #open the settings window even after the settings window was close. (remove this line to see it in action)
         elif self.menu_options[self.index] == "Leaderboard":
             new_state = LeaderboardMenu(self.game)
             new_state.enter_state()
@@ -49,8 +51,8 @@ class Title(State):
             pass
         
     def play_music(self):
-        music_busy = pygame.mixer.music.get_busy()                  #Boolean value if music(not just mixer) is being played
-        if music_busy == False:                                     #Therefore, when the music is stopped, it is played again
+        music_busy = pygame.mixer.music.get_busy()       #Boolean value if music(not just mixer) is being played
+        if music_busy == False:                          #Therefore, when the music is stopped, it is played again
             pygame.mixer.music.play()
 
 
@@ -67,8 +69,6 @@ class Title(State):
                 self.index = 3
                 self.click_sound.play()
 
-            
-
     def update(self, delta_time, actions):
         if actions["start"] == True: 
             new_state = Game_World(self.game)
@@ -76,13 +76,6 @@ class Title(State):
         self.check_clicks(actions)
         self.transition_state()
         self.play_music()
-
-        
-
-
-
-
-        
 
     def render(self, display):
         display.blit(self.menu_image, self.menu_rect)

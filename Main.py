@@ -2,22 +2,24 @@ import pygame
 import os 
 import time
 
-from states.title import Title
+from states.main_menu import Main_Menu
 
-pygame.display.set_caption('Snake Charmer')
+
 
 class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQrJxpck&t=331s
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption('Snake Charmer')
         self.SCREEN_WIDTH = 1408
         self.SCREEN_HEIGHT = 768
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH,self.SCREEN_HEIGHT), pygame.SCALED, vsync=1)
         self.running = True
         self.playing = True
-        self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False, "action1": False, "flute": False}
+        self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False,
+                         "action1": False, "flute": False}
         self.delta_time = 0
         self.previous_time = 0
-        self.states_stack = [] #Check clip for why stacks are used
+        self.states_stack = [] 
         self.load_assets()
         self.load_states()
         self.block_size = 64
@@ -92,8 +94,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         pygame.display.flip()
 
     def get_delta_time(self):
-        now = time.time()
-        self.delta_time = now - self.previous_time
+        now = time.time() 
+        self.delta_time = now - self.previous_time #calculates elapsed time betweeen frames 
         self.previous_time = now
 
     def text(self, surface, x, y, width, height, text, colour, background_colour):
@@ -113,8 +115,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.font = pygame.font.Font(os.path.join(self.font_dir, "Pixeltype.ttf"), 50)
 
     def load_states(self):
-        self.title_screen = Title(self)
-        self.states_stack.append(self.title_screen)
+        self.main_menu_screen = Main_Menu(self)
+        self.states_stack.append(self.main_menu_screen)
 
 if __name__ == "__main__":
     g = Game()
