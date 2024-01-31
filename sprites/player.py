@@ -19,31 +19,32 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
         self.load_sprites()
         self.current_frame = 0
-        self.previous_frame_update = 0
+        self.time_since_last_frame = 0
     
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
-        self.previous_frame_update += delta_time
+        self.time_since_last_frame += delta_time
         #if no direction entered, set animation to idle
-        if not (x_direction or y_direction):
-            self.current_image = self.current_animation_list[0]
-            return
+        if x_direction == 0 and y_direction == 0:
+            self.current_image = self.current_array[0]
         #if direction is pressed, use the correct sequnece of frames
-        if x_direction:
+        if x_direction != 0:
             if x_direction > 0:
-                self.current_animation_list = self.right_sprites
+                self.current_array = self.right_sprites
             else:
-                self.current_animation_list = self.left_sprites
-        if y_direction:
+                self.current_array = self.left_sprites
+        if y_direction !=0:
             if y_direction > 0:
-                self.current_animation_list = self.down_sprites
+                self.current_array = self.down_sprites
             else:
-                self.current_animation_list = self.up_sprites
-        #Advance the animation if enough time has passed
-        if self.previous_frame_update > 0.15:
-            self.previous_frame_update = 0
-            self.current_frame = (self.current_frame + 1) % len(self.current_animation_list)
-            self.current_image = self.current_animation_list[self.current_frame]
+                self.current_array = self.up_sprites
+        #if sufficient time has passed, the next frame can be loaded 
+        if self.time_since_last_frame > 0.15:
+            self.time_since_last_frame = 0
+            self.current_frame = self.current_frame + 1
+            if self.current_frame == len(self.current_array):
+                self.current_frame = 0
+            self.current_image = self.current_array[self.current_frame]
 
     def load_sprites(self):
         #Load directory with player sprites
@@ -60,7 +61,7 @@ class Player(pygame.sprite.Sprite):
             self.right_sprites.append(pygame.image.load(os.path.join(self.sprite_dir, "player_right" + str(count) + ".png")))
         #Set the default frames for when idle
         self.current_image = self.up_sprites[0]
-        self.current_animation_list = self.up_sprites
+        self.current_array = self.up_sprites
     
     def check_wall_collision(self, delta_time):
         for sprite in self.group.sprites():

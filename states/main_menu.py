@@ -70,9 +70,6 @@ class Main_Menu(State):
                 self.click_sound.play()
 
     def update(self, delta_time, actions):
-        if actions["start"] == True: 
-            new_state = Game_World(self.game)
-            new_state.enter_state() #Adds new state to top of the stack
         self.check_clicks(actions)
         self.transition_state()
         self.play_music()
