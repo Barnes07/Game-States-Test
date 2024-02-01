@@ -20,6 +20,8 @@ class SettingsMenu(State):
         self.menu_options = {0: "none",1: "main"}
         self.index = 0
 
+        self.test_text = self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)//2, (self.game.SCREEN_WIDTH)//2, 100, "Settings Menu", "white", "black")
+
     def check_clicks(self,actions):
         if actions["click"]:
             #checking which button the mouse is colliding with when clicked
@@ -39,6 +41,7 @@ class SettingsMenu(State):
 
     def render(self, display):
         display.blit(self.settings_image, self.settings_image_rect)
-        self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
+        self.back_button
+        #self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
 
         

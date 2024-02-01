@@ -15,16 +15,16 @@ class Game_World(State):
         #Jungle Map
         #Potential isometric implementation https://www.youtube.com/watch?v=gE2gTCwLdFM
         
-        self.jungle_map_height = self.game.SCREEN_WIDTH * 3
-        self.jungle_map_width = self.game.SCREEN_WIDTH * 3
-        self.jungle_actual_map_height = self.jungle_map_height//self.game.block_size
-        self.jungle_actual_map_width = self.jungle_map_width//self.game.block_size
-        self.jungle_iterations = 10
-        self.jungle_wall_density = 48
-        self.jungle_wall_count_variable = 3
-        self.jungle_map = CellularAutomata(self.jungle_map_height, self.jungle_map_width, self.jungle_actual_map_height, self.jungle_actual_map_width, self.jungle_iterations, self.jungle_wall_density, self.jungle_wall_count_variable, self.camera_group, self.game)
-        self.jungle_map = self.jungle_map.Generate_CA_Map()
-        print(self.jungle_map)
+        #self.jungle_map_height = self.game.SCREEN_WIDTH * 3
+        #self.jungle_map_width = self.game.SCREEN_WIDTH * 3
+        #self.jungle_actual_map_height = self.jungle_map_height//self.game.block_size
+        #self.jungle_actual_map_width = self.jungle_map_width//self.game.block_size
+        #self.jungle_iterations = 10
+        #self.jungle_wall_density = 48
+        #self.jungle_wall_count_variable = 3
+        #self.jungle_map = CellularAutomata(self.jungle_map_height, self.jungle_map_width, self.jungle_actual_map_height, self.jungle_actual_map_width, self.jungle_iterations, self.jungle_wall_density, self.jungle_wall_count_variable, self.camera_group, self.game)
+        #self.jungle_map = self.jungle_map.Generate_CA_Map()
+        #print(self.jungle_map)
 
         self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
 

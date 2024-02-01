@@ -38,3 +38,7 @@ class LeaderboardMenu(State):
     def render(self, display):
         display.blit(self.leaderboard_image, self.leaderboard_image_rect)
         self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
+
+
+
+
