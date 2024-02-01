@@ -34,8 +34,6 @@ class SettingsMenu(State):
         
 
     def update(self, delta_time, actions):
-        if actions["action1"]:
-            self.exit_state()
         self.check_clicks(actions)
         self.transition_state()
 

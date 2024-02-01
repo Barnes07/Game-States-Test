@@ -16,7 +16,7 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.running = True
         self.playing = True
         self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False,
-                         "action1": False, "flute": False}
+                         "flute": False}
         self.delta_time = 0
         self.previous_time = 0
         self.states_stack = [] 
@@ -31,8 +31,6 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
             self.update()
             self.render()
 
-        
-    
     def get_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:                      #Checks whether window has been closed 
@@ -54,8 +52,6 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                     self.actions["right"] = True 
                 if event.key == pygame.K_RETURN:
                     self.actions["start"] = True
-                if event.key == pygame.K_o:
-                    self.actions["action1"] = True
                 if event.key == pygame.K_f:
                     self.actions["flute"] = True
             if event.type == pygame.KEYUP:
@@ -72,8 +68,6 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                     self.actions["right"] = False 
                 if event.key == pygame.K_RETURN:
                     self.actions["start"] = False 
-                if event.key == pygame.K_o:
-                    self.actions["action1"] = False
                 if event.key == pygame.K_f:
                     self.actions["flute"] = False
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -82,15 +76,15 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                 self.actions["mouse_pos"] = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.actions["click"] = False
-
+            print(self.actions)
 
 
 
     def update(self):
-        self.states_stack[-1].update(self.delta_time, self.actions)
-
+        self.states_stack[len(self.states_stack)-1].update(self.delta_time, self.actions)
+       
     def render(self):
-        self.states_stack[-1].render(self.screen)
+        self.states_stack[len(self.states_stack)-1].render(self.screen)
         pygame.display.flip()
 
     def get_delta_time(self):
@@ -122,3 +116,4 @@ if __name__ == "__main__":
     g = Game()
     while g.running == True:
         g.game_loop()
+    

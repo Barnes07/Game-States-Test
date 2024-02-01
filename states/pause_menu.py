@@ -14,8 +14,9 @@ class PauseMenu(State):
         self.play_button_rect.center = ((self.game.SCREEN_WIDTH)-125, (self.game.SCREEN_HEIGHT)-75)
         
     def update(self, delta_time, actions):
-        if actions["action1"]:
-            self.exit_state()
+        if actions["click"]:
+            if self.play_button_rect.collidepoint(actions["mouse_pos"]):
+                self.exit_state()
 
     def render(self, display):
         self.previous_state.render(display)
