@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
-        self.speed = 200
+        self.speed = 5
         self.direction = pygame.math.Vector2()
         self.load_sprites()
         self.current_frame = 0
@@ -53,13 +53,13 @@ class Player(pygame.sprite.Sprite):
         self.up_sprites = []
         self.left_sprites =[]
         self.right_sprites = []
-        #load frames for each direction
+        #append lists
         for count in range (1,5):
             self.down_sprites.append(pygame.image.load(os.path.join(self.sprite_dir, "player_down" + str(count) + ".png")))
             self.up_sprites.append(pygame.image.load(os.path.join(self.sprite_dir, "player_up" + str(count) + ".png")))
             self.left_sprites.append(pygame.image.load(os.path.join(self.sprite_dir, "player_left" + str(count) + ".png")))
             self.right_sprites.append(pygame.image.load(os.path.join(self.sprite_dir, "player_right" + str(count) + ".png")))
-        #Set the default frames for when idle
+        #Set frames for when idle
         self.current_image = self.up_sprites[0]
         self.current_array = self.up_sprites
     
