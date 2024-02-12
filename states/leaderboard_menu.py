@@ -3,6 +3,7 @@ import pygame
 from states.state import State
 
 
+
 class LeaderboardMenu(State):
     def __init__(self, game):
         self.game = game
@@ -14,6 +15,7 @@ class LeaderboardMenu(State):
         self.back_button = self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
         self.back_button_rect = pygame.Rect((125), (self.game.SCREEN_HEIGHT)-75, 215, 100)
         self.back_button_rect.center = ((125), (self.game.SCREEN_HEIGHT)-75)
+
 
         self.click_sound = pygame.mixer.Sound(os.path.join(self.game.assets_dir, "audio", "mouse_click_sound.wav"))
 
@@ -38,6 +40,7 @@ class LeaderboardMenu(State):
     def render(self, display):
         display.blit(self.leaderboard_image, self.leaderboard_image_rect)
         self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
+        self.test_text = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2, (self.game.SCREEN_HEIGHT)//2, 300, 100, "Leaderboard Menu", "white", "black")
 
 
 

@@ -41,7 +41,7 @@ class Main_Menu(State):
         elif self.menu_options[self.index] == "Settings":
             new_state = SettingsMenu(self.game)
             new_state.enter_state()
-            #self.index = 0 #Encourntered a problem where self.index was still equal to the settinsg menu, which resulted in the program wanting to consistently 
+            self.index = 0 #Encourntered a problem where self.index was still equal to the settinsg menu, which resulted in the program wanting to consistently 
             #open the settings window even after the settings window was close. (remove this line to see it in action)
         elif self.menu_options[self.index] == "Leaderboard":
             new_state = LeaderboardMenu(self.game)

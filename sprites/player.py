@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
-        self.speed = 5
+        self.speed = 200
         self.direction = pygame.math.Vector2()
         self.load_sprites()
         self.current_frame = 0
@@ -27,6 +27,7 @@ class Player(pygame.sprite.Sprite):
         #if no direction entered, set animation to idle
         if x_direction == 0 and y_direction == 0:
             self.current_image = self.current_array[0]
+            return
         #if direction is pressed, use the correct sequnece of frames
         if x_direction != 0:
             if x_direction > 0:
@@ -44,6 +45,7 @@ class Player(pygame.sprite.Sprite):
             self.current_frame = self.current_frame + 1
             if self.current_frame == len(self.current_array):
                 self.current_frame = 0
+            print(self.current_image)
             self.current_image = self.current_array[self.current_frame]
 
     def load_sprites(self):
@@ -81,8 +83,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery += self.speed * delta_time * self.direction.y
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
-        #checks
-        self.check_wall_collision(delta_time)
+        
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y))

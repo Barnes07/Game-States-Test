@@ -14,7 +14,7 @@ class CameraGroup(pygame.sprite.Group):
         self.CameraOffset.y = player.rect.centery - self.HalfHeight
         
     def update(self, delta_time, actions):
-        self.centre_player()
+        pass
 
     def render(self, display, player):
         #old AlteredDraw function

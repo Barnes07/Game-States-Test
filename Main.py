@@ -23,7 +23,10 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.load_assets()
         self.load_states()
         self.block_size = 64
-    
+
+        self.clock = pygame.time.Clock()
+
+       
     def game_loop(self):
         while self.playing == True:
             self.get_delta_time()
@@ -76,12 +79,13 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                 self.actions["mouse_pos"] = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.actions["click"] = False
-            print(self.actions)
+            
 
 
 
     def update(self):
         self.states_stack[len(self.states_stack)-1].update(self.delta_time, self.actions)
+        
        
     def render(self):
         self.states_stack[len(self.states_stack)-1].render(self.screen)
@@ -93,14 +97,12 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.previous_time = now
 
     def text(self, surface, x, y, width, height, text, colour, background_colour):
-        text = self.font.render(text, False, colour)
-        text_rect = text.get_rect(center = (x,y))
-        text_background = pygame.Rect(x-(width//2), y-(height//2), width, height)
-        pygame.draw.rect(surface, background_colour, text_background, border_radius = 10)
-        surface.blit(text, text_rect)
-        
-          
-    
+            text = self.font.render(text, False, colour)
+            text_rect = text.get_rect(center = (x,y))
+            text_background = pygame.Rect(x-(width//2), y-(height//2), width, height)
+            pygame.draw.rect(surface, background_colour, text_background, border_radius = 10)
+            surface.blit(text, text_rect)
+
     def load_assets(self):
         #Instantiate pointers to directories
         self.assets_dir = os.path.join("assets")
@@ -111,6 +113,7 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
     def load_states(self):
         self.main_menu_screen = Main_Menu(self)
         self.states_stack.append(self.main_menu_screen)
+
 
 if __name__ == "__main__":
     g = Game()
