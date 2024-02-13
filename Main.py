@@ -115,6 +115,14 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.states_stack.append(self.main_menu_screen)
 
 
+
+
+
+
+
+        
+
+
 if __name__ == "__main__":
     g = Game()
     while g.running == True:

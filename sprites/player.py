@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
-        self.speed = 200
+        self.speed = 500
         self.direction = pygame.math.Vector2()
         self.load_sprites()
         self.current_frame = 0
@@ -76,6 +76,8 @@ class Player(pygame.sprite.Sprite):
         #Get direction
         self.direction.x = actions["right"] - actions["left"]
         self.direction.y = actions["down"] - actions["up"]
+        if self.direction.magnitude() != 0:
+            self.direction.normalize()
         #Update location
         self.x += self.speed * delta_time * self.direction.x
         self.y += self.speed  * delta_time * self.direction.y

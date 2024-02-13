@@ -4,7 +4,7 @@ from states.state import State
 from states.pause_menu import PauseMenu
 from sprites.player import Player
 from sprites.camera_group import CameraGroup
-from map_generation.cellular_automata import CellularAutomata
+from map_generation.cellular_automata import Cellular_Automata
 
 from sprites.floor import Floor
 from sprites.wall import Wall
@@ -29,8 +29,8 @@ class Game_World(State):
         #self.jungle_map = self.jungle_map.Generate_CA_Map()
         #print(self.jungle_map)
 
-        self.test_wall = Wall(10, 10, self.camera_group, self.game)
-        self.test_floor = Floor(100, 100, self.camera_group, self.game)
+        self.map = Cellular_Automata(50 ,50 ,40 ,self.camera_group, 3, 10, self.game)
+        self.map.update()
 
         self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
 
@@ -39,6 +39,7 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
+        
         
     
     def render(self, display):
