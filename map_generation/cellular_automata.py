@@ -5,7 +5,7 @@ from sprites.wall import Wall
 
 
 class Cellular_Automata(MapGernerator):
-    def __init__(self, actual_map_height, actual_map_width, wall_density, camera_group, wall_count_variable, iterations, game):
+    def __init__(self, actual_map_height, actual_map_width, wall_density, wall_count_variable, iterations, camera_group, game):
         super().__init__(actual_map_height, actual_map_width,)
 
 
@@ -39,41 +39,55 @@ class Cellular_Automata(MapGernerator):
                 elif map[x][y] == 1:
                     floor = Floor(x*self.block_size, y*self.block_size, self.camera_group, self.game)
                     
-
-
     def cellular_automata(self, noise_grid, iterations):
         for count in range (0, iterations):
-            new_grid = noise_grid
-
-            for a in range (0,(self.actual_map_width)-1):
-                for b in range (0,(self.actual_map_height)-1):
+            new_grid = noise_grid.copy()
+            for a in range (0,(self.actual_map_width)):
+                for b in range (0,(self.actual_map_height)):
                     wall_count = 0
-                    for x in range (a-1, a+1):
-                        for y in range(b-1, b+1):
+                    for x in range (a-1, a+2):
+                        for y in range(b-1, b+2):
                             if x != a or y !=b:
-                                if x >= 0 and x < self.actual_map_width and y >=0 and y < self.actual_map_height:
+                                if 0 <= x < self.actual_map_width and 0 <= y < self.actual_map_height:
                                     if new_grid[x][y] == 0:
                                         wall_count = wall_count + 1
                                 else:
                                     wall_count = wall_count + 1
-                        if wall_count > self.wall_count_variable:
-                            noise_grid[a][b] = 0
-                        else:
-                            noise_grid[a][b] = 1
+                    if wall_count > self.wall_count_variable:
+                        noise_grid[a][b] = 0
+                    else:
+                        noise_grid[a][b] = 1
         return(noise_grid)
 
-            
-    def update(self):
-        if self.actual_map_height >= 0 and self.actual_map_width >= 0:
-            noise_grid = self.generate_noise_grid()
-            map = self.cellular_automata(noise_grid, self.iterations)
-            self.fill_map(map)
-           
-        else:
+    def fill_edges(self, map):
+        for x in range(0, self.actual_map_width):
+            for y in range(0, self.actual_map_height):
+                if x == 0 or x == self.actual_map_width-1:
+                    map[x][y] = 0
+                if y == 0 or y == self.actual_map_height-1:
+                    map[x][y] = 0
+        return(map)
+    
+    def check_map_validity(self):
+        check = True
+        if self.actual_map_height < 0 or self.actual_map_width < 0:
+            check = False
             print("map cannot have negative dimensions")
+        if self.wall_density < 0 or self.wall_density > 100:
+            check = False
+            print("the wall density for map generation is not in the expected range") 
+        if self.iterations < 0:
+            check = False
+            print("iterations must be a positive value")
+        if self.wall_count_variable < 0:
+            check = False
+            print("wall_count_variable must be a positive value")
+        return(check)
 
-        
 
-
-
-
+    def update(self):
+        if self.check_map_validity() == True:
+            noise_grid = self.generate_noise_grid()
+            cellular_automata_map = self.cellular_automata(noise_grid, self.iterations)
+            final_map = self.fill_edges(cellular_automata_map)
+            self.fill_map(final_map)

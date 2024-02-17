@@ -29,7 +29,7 @@ class Game_World(State):
         #self.jungle_map = self.jungle_map.Generate_CA_Map()
         #print(self.jungle_map)
 
-        self.map = Cellular_Automata(50 ,50 ,40 ,self.camera_group, 3, 10, self.game)
+        self.map = Cellular_Automata(50 ,50 ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
 
         self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
