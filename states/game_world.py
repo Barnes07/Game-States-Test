@@ -31,8 +31,10 @@ class Game_World(State):
 
         self.map = Cellular_Automata(50 ,50 ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
-
         self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
+        self.start_coordinates = self.map.find_player_starting_coordinates(self.map.final_map)
+        self.player.set_coordinates(self.start_coordinates[0], self.start_coordinates[1])
+        
 
     def update(self, delta_time, actions):
         if actions["escape"]:

@@ -85,6 +85,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery += self.speed * delta_time * self.direction.y
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
+
+    def set_coordinates(self, x, y):
+        self.rect = self.image_holder.get_rect(center = (x, y))
+
+       
+
+
         
 
     def render(self, display):
