@@ -19,22 +19,23 @@ class Bandit(Enemy):
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
         self.direction = pygame.math.Vector2()
-
         
 
+        
+        #Player detection
         self.fov_width = 90
         self.half_fov_width = self.fov_width/2
         self.fov_distance = 500
         self.facing_angle = 0
 
+        #Pathfinding 
         self.actual_map_width = actual_map_width
         self.actual_map_height = actual_map_height
-
         self.directions = [(0,1), (0,-1), (1,0), (-1,0)]
         
 
-        
 
+        
         
 
     def check_detection(self, player):
@@ -63,24 +64,26 @@ class Bandit(Enemy):
         #calculate manhatten distance
         return(abs(startx - endx)) + abs(starty - endy) 
     
-    def create_node_grid(self):
-        grid = []
-        for x in range (0, self.actual_map_width):
-            new_array = []
-            for y in range (0, self.actual_map_height):
-                node = Node(self.game, self.game_world, x, y, self.actual_map_width, self.actual_map_height)
-                new_array.append(node)
-            grid.append(new_array)
+
 
     def pathfind(self, player, end, map): #end is end position
         if self.check_detection(player) == True:
             open_set = []
             closed_set = set()
-            start_node = Node(None, (self.x//self.game.block_size, self.y//self.game.block_size) )
+            g_scores = {}
+            f_scores = {}
+
+            positions_added_to_open_set = set() #Sets have O(1) time complexity so checking if a neighbour is already in the open set is more effcient 
+
+            start_node = Node(None, (self.x//self.game.block_size, self.y//self.game.block_size))
+            start_pos = (start_node.position)
+            g_scores[start_pos] = 0 
+            f_scores[start_pos] = 0 + self.heuristic(start_pos, end)
+
             heapq.heappush(open_set, (0, start_node))
 
             while len(open_set) > 0:
-                (current_g_score, current_node) = heapq.heappop(open_set) 
+                (current_f_score, current_node) = heapq.heappop(open_set) 
             
                 if current_node.position == end:
                     path = []
@@ -94,22 +97,21 @@ class Bandit(Enemy):
                 for count in range(0,4):
                     direction = self.directions[count]
                     neighbour_pos = (current_node.position[0] + direction[0], current_node.position[1] + direction[1])
-                
+
+                    #Check if neighbour is within map remits and is a floor object (1) and if it is not in the closed set. If it was in the closed set, then the shortest distance to that node has already been calculated
                     if 0 <= neighbour_pos[0] < self.actual_map_width and 0 <= neighbour_pos[1] < self.actual_map_height and map[neighbour_pos[0]][neighbour_pos[1]] == 1 and neighbour_pos not in closed_set:
-                        
-                        temp_g_score = current_g_score + 1
-                        f_score = temp_g_score + self.heuristic(neighbour_pos, end) 
-                        neighbour_node = Node(current_node, neighbour_pos)
-                        heapq.heappush(open_set, (f_score, neighbour_node)) #This adds a tuple (Total_cost,neighbour_node) to the priority queue. Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest)
-                
-                    
+                        temp_g_score = g_scores[current_node.position] + 1
+
+                        if neighbour_pos not in g_scores or temp_g_score < g_scores[neighbour_pos]: #will create a new neigbour node it the node does not have a g_score or a lower g_score has been found
+                            g_scores[neighbour_pos] = temp_g_score
+                            f_scores[neighbour_pos] = temp_g_score + self.heuristic(neighbour_pos, end)
+                            
+                            if neighbour_pos not in positions_added_to_open_set:
+                                neighbour_node = Node(current_node, neighbour_pos)
+                                heapq.heappush(open_set, (f_scores[neighbour_pos], neighbour_node)) #This adds a tuple (Total_cost,neighbour_node) to the priority queue. Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest)
+                                positions_added_to_open_set.add(neighbour_pos)
             return(None)                    
-            
-
-
-            
-
-    
+        
     def update(self):
         pass
         
