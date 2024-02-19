@@ -45,7 +45,6 @@ class Player(pygame.sprite.Sprite):
             self.current_frame = self.current_frame + 1
             if self.current_frame == len(self.current_array):
                 self.current_frame = 0
-            print(self.current_image)
             self.current_image = self.current_array[self.current_frame]
 
     def load_sprites(self):
@@ -96,3 +95,4 @@ class Player(pygame.sprite.Sprite):
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y))
+        pass

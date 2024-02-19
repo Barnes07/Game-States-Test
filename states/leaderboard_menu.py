@@ -3,11 +3,10 @@ import pygame
 from states.state import State
 
 
-
 class LeaderboardMenu(State):
     def __init__(self, game):
+        super().__init__(game)
         self.game = game
-        State.__init__(self,game)
         self.leaderboard_image = pygame.image.load(os.path.join(self.game.assets_dir, "map/menus", "leaderboard_background.png"))
         self.leaderboard_image = pygame.transform.scale_by(self.leaderboard_image, 0.48)
         self.leaderboard_image_rect = self.leaderboard_image .get_rect(center = (self.game.SCREEN_WIDTH//2, (self.game.SCREEN_HEIGHT//2)+300))
@@ -15,7 +14,6 @@ class LeaderboardMenu(State):
         self.back_button = self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
         self.back_button_rect = pygame.Rect((125), (self.game.SCREEN_HEIGHT)-75, 215, 100)
         self.back_button_rect.center = ((125), (self.game.SCREEN_HEIGHT)-75)
-
 
         self.click_sound = pygame.mixer.Sound(os.path.join(self.game.assets_dir, "audio", "mouse_click_sound.wav"))
 

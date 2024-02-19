@@ -6,7 +6,7 @@ from sprites.wall import Wall
 
 class Cellular_Automata(MapGernerator):
     def __init__(self, actual_map_height, actual_map_width, wall_density, wall_count_variable, iterations, camera_group, game):
-        super().__init__(actual_map_height, actual_map_width,)
+        super().__init__(actual_map_height, actual_map_width)
 
 
         self.game = game 
@@ -100,8 +100,6 @@ class Cellular_Automata(MapGernerator):
                     #set player starting coordinates to those stored in a and b
                     a = a * self.game.block_size
                     b = b * self.game.block_size
-                    print(a)
-                    print(b)
                     return(a, b)
 
 
@@ -113,3 +111,4 @@ class Cellular_Automata(MapGernerator):
             cellular_automata_map = self.cellular_automata(noise_grid, self.iterations)
             self.final_map = self.fill_edges(cellular_automata_map)
             self.fill_map(self.final_map)
+            

@@ -1,6 +1,5 @@
 import pygame
 import os
-import time
 from states.state import State #Imports the state superclass
 from states.game_world import Game_World
 from states.settings_menu import SettingsMenu
@@ -8,7 +7,7 @@ from states.leaderboard_menu import LeaderboardMenu
 
 class Main_Menu(State):
     def __init__(self, game):
-        State.__init__(self,game)
+        super().__init__(game)
         #Setting the menu
         self.menu_image = pygame.image.load(os.path.join(self.game.assets_dir, "map/menus", "main_menu.png"))
         self.menu_image = pygame.transform.scale_by(self.menu_image, 0.48)

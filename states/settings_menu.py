@@ -5,8 +5,8 @@ from states.state import State
 
 class SettingsMenu(State):
     def __init__(self, game):
+        super().__init__(game)
         self.game = game
-        State.__init__(self,game)
         self.settings_image = pygame.image.load(os.path.join(self.game.assets_dir, "map/menus", "settings_background.png"))
         self.settings_image = pygame.transform.scale_by(self.settings_image, 0.48)
         self.settings_image_rect = self.settings_image .get_rect(center = (self.game.SCREEN_WIDTH//2, (self.game.SCREEN_HEIGHT//2)+300))
@@ -19,8 +19,6 @@ class SettingsMenu(State):
 
         self.menu_options = {0: "none",1: "main"}
         self.index = 0
-
-        
 
     def check_clicks(self,actions):
         if actions["click"]:
@@ -43,5 +41,7 @@ class SettingsMenu(State):
         display.blit(self.settings_image, self.settings_image_rect)
         self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
         self.test_text = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2, (self.game.SCREEN_HEIGHT)//2, 210, 100, "Settings Menu", "white", "black")
+
+
 
         

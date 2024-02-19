@@ -24,6 +24,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.load_states()
         self.block_size = 64
 
+        
+
         self.clock = pygame.time.Clock()
 
        
