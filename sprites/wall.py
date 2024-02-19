@@ -11,3 +11,5 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
 
         
+
+        
