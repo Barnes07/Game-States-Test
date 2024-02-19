@@ -46,8 +46,9 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
-        path = self.enemy.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
-        print(path)
+        self.enemy.update(delta_time)
+        #path = self.enemy.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
+
 
 
 

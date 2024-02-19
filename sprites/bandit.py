@@ -19,6 +19,10 @@ class Bandit(Enemy):
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
         self.direction = pygame.math.Vector2()
+
+        self.waypoints = []
+        self.target_waypoint = 0
+        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         
 
         
@@ -34,10 +38,23 @@ class Bandit(Enemy):
         self.directions = [(0,1), (0,-1), (1,0), (-1,0)]
         
 
-
+    def set_waypoints(self, new_waypoints):
+        self.waypoints = new_waypoints
+        self.target_waypoint = 0
+    
+    def create_path(self):
+        path = self.pathfind(self.game_world.player, self.game_world.player.actual_pos, self.game_world.map.final_map)
+        self.set_waypoints(path)
+    
+    def get_direction(self):
+        if not self.waypoints: #if self.waypoints is empty, exit the function
+            return
+        if self.waypoints[self.target_waypoint] == self.actual_pos and self.target_waypoint < len(self.waypoints)-1: #Checks if the snake has reached the next coordinate and whether it is at the penuntamate coordiante of the lits. This final check is needed to prevent an "index out of range" error. 
+            self.target_waypoint += 1
+        self.target = pygame.math.Vector2(self.waypoints[self.target_waypoint]) #The target of the snake is updated to the index pointed to by the value in the "target_waypoint" attribute
+        self.direction = self.target- self.actual_pos #Will set "self.direction" to x and y to either +1,-1, which can be multiplied by the speed later
         
         
-
     def check_detection(self, player):
         check = False
         enemy_vector = pygame.math.Vector2(self.x, self.y)
@@ -55,7 +72,6 @@ class Bandit(Enemy):
                 check = True
         return(check)
             
-            
     def heuristic(self, start, end):
         startx = start[0]
         starty = start[1]
@@ -64,8 +80,6 @@ class Bandit(Enemy):
         #calculate manhatten distance
         return(abs(startx - endx)) + abs(starty - endy) 
     
-
-
     def pathfind(self, player, end, map): #end is end position
         if self.check_detection(player) == True:
             open_set = []
@@ -75,7 +89,7 @@ class Bandit(Enemy):
 
             positions_added_to_open_set = set() #Sets have O(1) time complexity so checking if a neighbour is already in the open set is more effcient 
 
-            start_node = Node(None, (self.x//self.game.block_size, self.y//self.game.block_size))
+            start_node = Node(None, (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)) #was using self.x instead of self.rect.centerx which meant the start node was incorrect each time. 
             start_pos = (start_node.position)
             g_scores[start_pos] = 0 
             f_scores[start_pos] = 0 + self.heuristic(start_pos, end)
@@ -112,9 +126,36 @@ class Bandit(Enemy):
                                 positions_added_to_open_set.add(neighbour_pos)
             return(None)                    
         
-    def update(self):
-        pass
+    def update(self, delta_time):
+        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+        player_pos = pygame.math.Vector2(self.game_world.player.actual_pos)
+        distance_to_player = self.actual_pos.distance_to(player_pos)
         
+
+        if distance_to_player < 5: #check distance to player to determine if pathfinding should take place
+            pass
+
+        else:
+            if not self.waypoints or self.target_waypoint >= len(self.waypoints):
+                self.create_path()
+                path = self.waypoints
+                print(path)
+            self.get_direction()
+        
+    
+        
+        self.rect.centerx += self.speed * delta_time * self.direction.x 
+        self.rect.centery += self.speed * delta_time * self.direction.y
+
+                
+                
+                
+                
+
+
+
+
+
         
 
         
