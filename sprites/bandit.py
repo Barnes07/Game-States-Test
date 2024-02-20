@@ -36,6 +36,13 @@ class Bandit(Enemy):
         self.actual_map_width = actual_map_width
         self.actual_map_height = actual_map_height
         self.directions = [(0,1), (0,-1), (1,0), (-1,0)]
+
+        #Follow path
+        self.distance_to_node = self.game.block_size
+        self.time_to_node = self.distance_to_node/self.speed
+        self.time_since_last_node = 0
+
+        
         
 
     def set_waypoints(self, new_waypoints):
@@ -46,13 +53,20 @@ class Bandit(Enemy):
         path = self.pathfind(self.game_world.player, self.game_world.player.actual_pos, self.game_world.map.final_map)
         self.set_waypoints(path)
     
-    def get_direction(self):
-        if not self.waypoints: #if self.waypoints is empty, exit the function
-            return
-        if self.waypoints[self.target_waypoint] == self.actual_pos and self.target_waypoint < len(self.waypoints)-1: #Checks if the snake has reached the next coordinate and whether it is at the penuntamate coordiante of the lits. This final check is needed to prevent an "index out of range" error. 
+    def set_direction(self):
+        if not self.waypoints or self.target_waypoint >= len(self.waypoints):
+            self.direction = (0,0)
+        else:
+            self.target = pygame.math.Vector2(self.waypoints[self.target_waypoint]) 
+            self.direction = self.target - self.actual_pos
             self.target_waypoint += 1
-        self.target = pygame.math.Vector2(self.waypoints[self.target_waypoint]) #The target of the snake is updated to the index pointed to by the value in the "target_waypoint" attribute
-        self.direction = self.target- self.actual_pos #Will set "self.direction" to x and y to either +1,-1, which can be multiplied by the speed later
+            print(self.direction)
+
+
+
+        
+            
+
         
         
     def check_detection(self, player):
@@ -130,22 +144,38 @@ class Bandit(Enemy):
         self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         player_pos = pygame.math.Vector2(self.game_world.player.actual_pos)
         distance_to_player = self.actual_pos.distance_to(player_pos)
+
+        self.time_since_last_node += delta_time
         
 
         if distance_to_player < 5: #check distance to player to determine if pathfinding should take place
             pass
 
         else:
-            if not self.waypoints or self.target_waypoint >= len(self.waypoints):
+            if not self.waypoints:
                 self.create_path()
                 path = self.waypoints
                 print(path)
-            self.get_direction()
-        
-    
-        
-        self.rect.centerx += self.speed * delta_time * self.direction.x 
-        self.rect.centery += self.speed * delta_time * self.direction.y
+                
+                
+            #needs revising
+            if self.time_since_last_node > self.time_to_node and self.waypoints:
+                self.time_since_last_node = 0
+                if self.target_waypoint < len(self.waypoints):
+                    if self.target_waypoint > 0:
+                        self.rect.centerx = (self.waypoints[self.target_waypoint-1][0]) * self.game.block_size
+                        self.rect.centery = (self.waypoints[self.target_waypoint-1][1]) * self.game.block_size
+                        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+                    self.set_direction()
+                else:
+                    self.waypoints = []
+                    self.target_waypoint = 0
+
+            
+
+
+            
+            
 
                 
                 
