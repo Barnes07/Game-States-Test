@@ -14,7 +14,7 @@ class Bandit(Enemy):
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
-        self.detection_radius = 10000
+        self.detection_radius = 100 
 
 
         self.actual_map_width = actual_map_width
