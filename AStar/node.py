@@ -3,7 +3,9 @@ class Node():
         self.parent = parent
         self.position = position
 
-    def __lt__(self, other): #ensures heapqcan compare and order the list based on f_scores
+
+
+    def __lt__(self, other): #ensures heapq can compare and order nodes with the same f_score
         return(False)
         
 
