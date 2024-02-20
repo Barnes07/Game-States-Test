@@ -10,27 +10,20 @@ from AStar.node import Node
 class Bandit(Enemy):
     def __init__ (self, game, group, actual_map_width, actual_map_height, game_world):
         super().__init__(game, group)
-        self.game = game
         self.game_world = game_world
-        self.group = group
         self.x = 1280
         self.y = 1280
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
         self.direction = pygame.math.Vector2()
-
-        self.waypoints = []
+        self.waypoints = [] #rename to shortest path
         self.target_waypoint = 0
         self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         
 
-        
         #Player detection
-        self.fov_width = 90
-        self.half_fov_width = self.fov_width/2
-        self.fov_distance = 500
-        self.facing_angle = 0
+        self.detection_radius = 500
 
         #Pathfinding 
         self.actual_map_width = actual_map_width
@@ -64,28 +57,16 @@ class Bandit(Enemy):
 
 
 
-        
-            
-
-        
-        
     def check_detection(self, player):
         check = False
         enemy_vector = pygame.math.Vector2(self.x, self.y)
         player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
-        facing_vector = pygame.math.Vector2(1,0).rotate(self.facing_angle)
-        direction_to_player = (player_vector - enemy_vector).normalize()
-        angle_to_player = facing_vector.angle_to(direction_to_player)
-        #normalisation if angle to player is a negative value. So that the angle is in the range 0-360.
-        if angle_to_player < 0:
-            angle_to_player = angle_to_player + 360
-        
-        if (360-self.half_fov_width) <= angle_to_player <= 360 or self.half_fov_width >= angle_to_player >= 0:
-            distance_to_player = player_vector.distance_to(enemy_vector)
-            if distance_to_player <= self.fov_distance:
+        distance_to_player = player_vector.distance_to(enemy_vector)
+        if distance_to_player <= self.detection_radius:
                 check = True
         return(check)
-            
+
+
     def heuristic(self, start, end):
         startx = start[0]
         starty = start[1]
