@@ -14,7 +14,7 @@ class Bandit(Enemy):
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
-        self.detection_radius = 100 
+        self.detection_radius = 5000 
 
 
         self.actual_map_width = actual_map_width
@@ -70,7 +70,7 @@ class Bandit(Enemy):
                         temp_g_score = current_g_score + 1
                         f_score = temp_g_score + self.heuristic(neighbour_pos, end) 
                         neighbour_node = Node(current_node, neighbour_pos) #instantiates a new node with the current node as a parent and the neighbour's position
-                        heapq.heappush(open_set, (f_score, neighbour_node)) #adds a tuple (Total_cost,neighbour_node) to the priority queue. 
+                        heapq.heappush(open_set, (f_score, neighbour_node)) #adds a tuple (Total_cost,neighbour_node) to the priority queue. Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest)
                 
                     
             return(None) #returns none if open set is empty and therefore no path has been found                    
@@ -78,7 +78,7 @@ class Bandit(Enemy):
 
 
 
-#Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest)
+
 
     
     def update(self):
