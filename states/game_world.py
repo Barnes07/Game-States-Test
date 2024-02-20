@@ -53,6 +53,7 @@ class Game_World(State):
         
         path = self.bandit.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
         print(path)
+        
 
 
 
