@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.game = game 
         self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
         self.x = 64
-        self.y = 256
+        self.y = 128
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group

@@ -35,10 +35,12 @@ class Game_World(State):
         self.actual_map_height = 50
         self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
-        self.enemy = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+
+        self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+
         self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
-        self.start_coordinates = self.map.find_player_starting_coordinates(self.map.final_map)
-        self.player.set_coordinates(self.start_coordinates[0], self.start_coordinates[1])
+        #self.start_coordinates = self.map.find_player_starting_coordinates(self.map.final_map)
+        #self.player.set_coordinates(self.start_coordinates[0], self.start_coordinates[1])
         
 
     def update(self, delta_time, actions):
@@ -46,7 +48,7 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
-        path = self.enemy.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
+        path = self.bandit.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
         print(path)
 
 
