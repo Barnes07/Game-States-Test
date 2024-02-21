@@ -85,7 +85,7 @@ class Cellular_Automata(MapGernerator):
             print("wall_count_variable must be a positive value")
         return(check)
     
-    def find_player_starting_coordinates(self, map):
+    def find_player_starting_coordinates(self, map): #no longer needed
         for a in range (0, self.actual_map_width):
             for b in range (0, self.actual_map_height):
                 wall_count = 0

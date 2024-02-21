@@ -4,6 +4,7 @@ from states.state import State
 from states.pause_menu import PauseMenu
 from sprites.player import Player
 from sprites.bandit import Bandit
+from sprites.artifact import Artifact
 from sprites.camera_group import CameraGroup
 from map_generation.cellular_automata import Cellular_Automata
 
@@ -14,7 +15,7 @@ class Game_World(State):
     def __init__(self, game):
         super().__init__(game)
         self.camera_group = CameraGroup(self.game)
-        self.player = Player(self.game, self.camera_group)
+        
 
 
         
@@ -38,12 +39,16 @@ class Game_World(State):
         self.map.update()
 
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+        self.artifact = Artifact(self.game, self, self.camera_group)
 
-        self.player = Player(self.game, self.camera_group)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
-        #self.start_coordinates = self.map.find_player_starting_coordinates(self.map.final_map)
-        #self.player.set_coordinates(self.start_coordinates[0], self.start_coordinates[1])
+        self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
+        self.player.find_start_coordinates(self.map.final_map)
+        self.bandit.find_start_coordinates(self.map.final_map)
+        self.artifact.find_start_coordiantes(self.map.final_map)
 
+        
+        
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
@@ -51,6 +56,8 @@ class Game_World(State):
         self.player.update(delta_time, actions)
         self.bandit.update(delta_time)
 
+        if self.artifact.alive():
+            self.artifact.update()
 
     def render(self, display):
         display.fill("black")

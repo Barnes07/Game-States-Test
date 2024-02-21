@@ -6,9 +6,10 @@ from sprites.wall import Wall
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, game, group):
+    def __init__(self, game, group, game_world):
         super().__init__(group)
         self.game = game 
+        self.game_world = game_world
         self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
         self.x = 1380
         self.y = 1380
@@ -88,6 +89,22 @@ class Player(pygame.sprite.Sprite):
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
 
+    def find_start_coordinates(self, map):
+        for a in range (0, self.game_world.actual_map_width):
+            for b in range(0, self.game_world.actual_map_height):
+                wall_count = 0
+                for x in range (a-1, a+2):
+                    for y in range(b-1, b+2):
+                        if 0 <= x < self.game_world.actual_map_width and 0 <= y < self.game_world.actual_map_height:
+                            if map[x][y] == 0:
+                                wall_count = wall_count + 1
+                        else:
+                            wall_count = wall_count + 1
+                if wall_count == 0:
+                    #set player starting coordinates to those stored in a and b
+                    a = a * self.game.block_size
+                    b = b * self.game.block_size
+                    self.set_coordinates(a, b)
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))
