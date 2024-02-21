@@ -14,11 +14,18 @@ class Bandit(Enemy):
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 100
-        self.detection_radius = 5000 
 
+        self.detection_radius = 5000 
+        self.chase_radius = 250
+        self.waypoints = []
+        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
 
         self.actual_map_width = actual_map_width
         self.actual_map_height = actual_map_height
+
+        self.time_since_last_move = 0
+        self.time_to_move_to_waypoint = 1
+        self.current_waypoint = 0
         
         
 
@@ -30,8 +37,7 @@ class Bandit(Enemy):
         if distance_to_player <= self.detection_radius:
             check = True
         return(check)
-            
-            
+
     def heuristic(self, start, end):
         startx = start[0]
         starty = start[1]
@@ -50,7 +56,7 @@ class Bandit(Enemy):
 
             positions_added_to_open_set = set()
 
-            start_node = Node(None, (self.x//self.game.block_size, self.y//self.game.block_size))
+            start_node = Node(None, (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size))
             start_pos = (start_node.position)
             g_scores[start_pos] = 0
             f_scores[start_pos] = 0 + self.heuristic(start_pos, end)
@@ -83,19 +89,50 @@ class Bandit(Enemy):
 
                             if neighbour_pos not in positions_added_to_open_set:
                                 neighbour_node = Node(current_node, neighbour_pos) #instantiates a new node with the current node as a parent and the neighbour's position
-                                heapq.heappush(open_set, (f_scores[neighbour_pos], neighbour_node)) #adds a tuple (Total_cost,neighbour_node) to the priority queue. 
+                                heapq.heappush(open_set, (f_scores[neighbour_pos], neighbour_node)) #adds a tuple (Total_cost,neighbour_node) to the priority queue. Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest) 
                                 positions_added_to_open_set.add(neighbour_pos)
 
             return(None) #returns none if open set is empty and therefore no path has been found                    
             
+    def set_waypoints(self, path):
+        self.waypoints = path
 
-#Since the heapq module orders elements based on the first element of each tuple, this means that the priority queue is ordered by the Total_cost (from lowest to highest)
+    def create_path(self):
+        path = self.pathfind(self.game_world.player, self.game_world.player.actual_pos, self.game_world.map.final_map)
+        self.set_waypoints(path)
 
+    def check_chase(self,player):
+        check = False
+        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+        player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
+        distance_to_player = player_vector.distance_to(enemy_vector)
+        if distance_to_player <= self.chase_radius:
+            check = True
+        return(check)
 
-
-    
-    def update(self):
-        pass
+    def follow_waypoints(self, delta_time):
+        self.time_since_last_move += delta_time
+        if self.time_since_last_move > self.time_to_move_to_waypoint and self.waypoints:
+            if self.current_waypoint < len(self.waypoints) - 1:
+                self.time_since_last_move = 0  
+                self.current_waypoint += 1
+                self.rect.centerx = self.waypoints[self.current_waypoint][0] * self.game.block_size
+                self.rect.centery = self.waypoints[self.current_waypoint][1] * self.game.block_size
+                self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+            else:
+                self.waypoints = []
+                self.current_waypoint = 0
+                self.time_since_last_move = 0
+        
+    def update(self, delta_time):
+        if self.check_chase(self.game_world.player):
+            pass
+        else:
+            if not self.waypoints:
+                self.create_path()
+                path = self.waypoints #for testing
+                print(path) #for testing
+            self.follow_waypoints(delta_time)
         
         
 

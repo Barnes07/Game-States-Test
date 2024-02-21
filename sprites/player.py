@@ -20,6 +20,8 @@ class Player(pygame.sprite.Sprite):
         self.load_sprites()
         self.current_frame = 0
         self.time_since_last_frame = 0
+
+        self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
     
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
@@ -82,8 +84,10 @@ class Player(pygame.sprite.Sprite):
         self.y += self.speed  * delta_time * self.direction.y
         self.rect.centerx += self.speed * delta_time * self.direction.x #these two lines are needed to also update the x and y coordinates of the rectangle so that the x and y coordinates in the centre_player method(camera_group)are updated and allow the assets to move in the opposite direction to the player. 
         self.rect.centery += self.speed * delta_time * self.direction.y
+        self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
+
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))

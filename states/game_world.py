@@ -49,17 +49,9 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
-
-        
-        path = self.bandit.pathfind(self.player, (self.player.rect.centerx//self.game.block_size, self.player.rect.centery//self.game.block_size), self.map.final_map)
-        print(path)
-        
+        self.bandit.update(delta_time)
 
 
-
-        
-        
-    
     def render(self, display):
         display.fill("black")
         self.camera_group.render(display, self.player)

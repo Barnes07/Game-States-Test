@@ -5,7 +5,7 @@ class Node():
 
         
 
-    def __lt__(self, other):
+    def __lt__(self, other): #overwrites in-built (<) operator so that heapq correctkly orders nodes by f_score
         return(False)
         
 
