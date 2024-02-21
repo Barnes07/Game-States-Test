@@ -23,6 +23,8 @@ class Player(pygame.sprite.Sprite):
         self.time_since_last_frame = 0
 
         self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+
+        self.artifacts_collected = 0
     
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
@@ -116,4 +118,4 @@ class Player(pygame.sprite.Sprite):
 
     def render(self, display):
         display.blit(self.current_image, (self.x, self.y))
-        pass
+        
