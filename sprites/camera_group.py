@@ -1,5 +1,7 @@
 import pygame 
 
+from sprites.artifact import Artifact
+
 class CameraGroup(pygame.sprite.Group):
     def __init__(self,game):
         super().__init__()
@@ -14,7 +16,11 @@ class CameraGroup(pygame.sprite.Group):
         self.CameraOffset.y = player.rect.centery - self.HalfHeight
         
     def update(self, delta_time, actions):
-        pass
+        for sprite in self.sprites():
+            check = isinstance(sprite, Artifact)
+            if check == True:
+                sprite.update()
+
 
     def render(self, display, player):
         #old AlteredDraw function

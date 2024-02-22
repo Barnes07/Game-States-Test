@@ -6,7 +6,7 @@ from states.main_menu import Main_Menu
 
 
 
-class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQrJxpck&t=331s
+class Game():
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Snake Charmer')
@@ -24,7 +24,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
         self.load_states()
         self.block_size = 64
 
-        
+        #settings
+        self.number_of_artifacts = 10
 
         self.clock = pygame.time.Clock()
 
@@ -59,6 +60,7 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
                     self.actions["start"] = True
                 if event.key == pygame.K_f:
                     self.actions["flute"] = True
+                
             if event.type == pygame.KEYUP:
                 #Setting all actions to False when released
                 if event.key == pygame.K_ESCAPE:
@@ -82,6 +84,8 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
             if event.type == pygame.MOUSEBUTTONUP:
                 self.actions["click"] = False
             
+            
+            
 
 
 
@@ -104,6 +108,14 @@ class Game(): #Talkthrough of class logic: https://www.youtube.com/watch?v=b_DkQ
             text_background = pygame.Rect(x-(width//2), y-(height//2), width, height)
             pygame.draw.rect(surface, background_colour, text_background, border_radius = 10)
             surface.blit(text, text_rect)
+    
+
+    
+
+
+        
+
+
 
     def load_assets(self):
         #Instantiate pointers to directories

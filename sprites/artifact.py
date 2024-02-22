@@ -12,11 +12,6 @@ class Artifact(pygame.sprite.Sprite):
         self.current_image = pygame.image.load(os.path.join(self.game.sprite_dir, "artifact", "artifact.png"))
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
 
-
-
-
-
-
     def find_start_coordiantes(self, map):
         found = False
         while found == False:
@@ -33,15 +28,18 @@ class Artifact(pygame.sprite.Sprite):
         if pygame.sprite.collide_rect(self, self.game_world.player): #in_built pygame sprite method to check collision
             self.get_picked_up()
             self.game_world.player.artifacts_collected += 1
+            self.game_world.filled_proportion += self.game_world.loot_bag_fill_proportion
+            if self.game_world.player.speed + -20 > 0:
+                print(self.game_world.player.speed)
+                self.game_world.player.speed += -20
+                print(self.game_world.player.speed)
     
     def get_picked_up(self):
         pygame.sprite.Sprite.kill(self)
 
-        
-
-            
     def update(self):
-        self.check_player_collision()
+        if self.alive():
+            self.check_player_collision()
         
 
 

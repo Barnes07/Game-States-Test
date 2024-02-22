@@ -71,8 +71,8 @@ class Player(pygame.sprite.Sprite):
     
     def check_wall_collision(self, delta_time):
         for sprite in self.group.sprites():
-            Check = isinstance(sprite, Wall)      #"isinstance" is a function that returns a boolean value depending on whether the firsts parameter is of the class type mentioned in the second parameter
-            if Check == True:
+            check = isinstance(sprite, Wall)      #"isinstance" is a function that returns a boolean value depending on whether the firsts parameter is of the class type mentioned in the second parameter
+            if check == True:
                 if pygame.sprite.collide_rect(self, sprite):
                     self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
 
@@ -110,6 +110,7 @@ class Player(pygame.sprite.Sprite):
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))
+    
 
        
 
