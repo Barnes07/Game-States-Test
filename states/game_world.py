@@ -23,9 +23,9 @@ class Game_World(State):
         self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
 
-        self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
-        #self.artifact = Artifact(self.game, self, self.camera_group)
         self.instantiate_artifacts()
+        self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+        
 
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
@@ -34,10 +34,10 @@ class Game_World(State):
     
         self.time_since_start = 0
 
-        self.filled_proportion = 0
+        self.filled_height = 0
         self.loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, 100)
-        self.loot_bag_fill_proportion = self.loot_bag_rect.height/self.game.number_of_artifacts
-        self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_proportion)
+        self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
+        self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
         
         
 
@@ -50,14 +50,13 @@ class Game_World(State):
         
     def instantiate_artifacts(self):
         for artifact in range (0,self.game.number_of_artifacts):
-            print(artifact)
             artifact = Artifact(self.game, self, self.camera_group)
             artifact.find_start_coordiantes(self.map.final_map)
 
-    def draw_artifact_progress(self):
-        self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect)
-        self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_proportion)
-        self.filled_loot_bag = pygame.draw.rect(self.game.screen, "yellow", self.filled_loot_bag_rect)
+    def draw_loot_bag(self):
+        self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect) #background, grey part of loot bag
+        self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, self.loot_bag_rect.bottom - self.filled_height, 50, self.filled_height) #updates dimensions of "filled" rectangle
+        self.filled_loot_bag = pygame.draw.rect(self.game.screen, "yellow", self.filled_loot_bag_rect) #draws updated "filled" rectangle 
 
 
 
@@ -79,7 +78,7 @@ class Game_World(State):
     def render(self, display):
         display.fill("black")
         self.camera_group.render(display, self.player)
-        self.draw_artifact_progress()
+        self.draw_loot_bag()
 
         #self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
         

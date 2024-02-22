@@ -107,6 +107,7 @@ class Player(pygame.sprite.Sprite):
                     a = a * self.game.block_size
                     b = b * self.game.block_size
                     self.set_coordinates(a, b)
+                    
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))

@@ -125,8 +125,8 @@ class Bandit(Enemy):
                 self.time_since_last_move = 0
     
     def find_start_coordinates(self, map):
-        for a in range (0, self.game_world.actual_map_width, -1):
-            for b in range(0, self.game_world.actual_map_height, -1):
+        for a in range (self.game_world.actual_map_width, 0, -1):
+            for b in range(self.game_world.actual_map_height, 0, -1):
                 wall_count = 0
                 for x in range (a-1, a+2):
                     for y in range(b-1, b+2):
@@ -137,12 +137,14 @@ class Bandit(Enemy):
                             wall_count = wall_count + 1
                 if wall_count == 0:
                     #set bandit starting coordinates to those stored in a and b
-                    a = a * self.game.block_size
-                    b = b * self.game.block_size
-                    self.set_coordinates(a, b)
+                    start_x = a * self.game.block_size
+                    start_y = b * self.game.block_size
+                    self.set_coordinates(start_x, start_y)
+                    
 
     def set_coordinates(self, x, y):
         self.rect = self.current_image.get_rect(center = (x, y))
+
         
     def update(self, delta_time):
         if self.check_chase(self.game_world.player):
