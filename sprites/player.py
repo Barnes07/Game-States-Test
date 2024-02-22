@@ -77,6 +77,10 @@ class Player(pygame.sprite.Sprite):
                     self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
 
     def update(self, delta_time, actions):
+        velocity_x = self.rect.centerx - self.previous_position.x
+        velocity_y = self.rect.centery - self.previous_position.y
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
+
         #Get direction
         self.direction.x = actions["right"] - actions["left"]
         self.direction.y = actions["down"] - actions["up"]
@@ -90,6 +94,8 @@ class Player(pygame.sprite.Sprite):
         self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
+
+        self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
 
     def find_start_coordinates(self, map):
         for a in range (0, self.game_world.actual_map_width):

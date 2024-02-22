@@ -26,14 +26,14 @@ class Bandit(Enemy):
         self.time_since_last_move = 0
         self.time_to_move_to_waypoint = 1
         self.current_waypoint = 0
+
+        self.previous_position = pygame.math.Vector2()
         
         
 
     def check_detection(self, player):
         check = False
-        enemy_vector = pygame.math.Vector2(self.x, self.y)
-        player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
-        distance_to_player = player_vector.distance_to(enemy_vector)
+        distance_to_player = self.get_distance_to_player(player)
         if distance_to_player <= self.detection_radius:
             check = True
         return(check)
@@ -45,7 +45,6 @@ class Bandit(Enemy):
         endy = end[1]
         return(abs(startx - endx)) + abs(starty - endy) #formula for manhatten distance
     
-
     def pathfind(self, player, end, map): #end is end position
         if self.check_detection(player) == True:
             directions = [(0,1), (0,-1), (1,0), (-1,0)]
@@ -103,9 +102,7 @@ class Bandit(Enemy):
 
     def check_chase(self,player):
         check = False
-        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-        player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
-        distance_to_player = player_vector.distance_to(enemy_vector)
+        distance_to_player = self.get_distance_to_player(player)
         if distance_to_player <= self.chase_radius:
             check = True
         return(check)
@@ -141,20 +138,50 @@ class Bandit(Enemy):
                     start_y = b * self.game.block_size
                     self.set_coordinates(start_x, start_y)
                     
-
     def set_coordinates(self, x, y):
         self.rect = self.current_image.get_rect(center = (x, y))
 
+    def get_distance_to_player(self, player):
+        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+        player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
+        distance_to_player = player_vector.distance_to(enemy_vector)
+        return(distance_to_player)
+    
+    def predict_player_future_position(self, player):
+        future_position_x = player.rect.centerx + player.velocity.x* self.game.delta_time
+        future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time
+        return((future_position_x, future_position_y))
+
+    def pursue(self, player):
+        distance_to_player = self.get_distance_to_player(player)
+        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+
+        player_future_vector = pygame.math.Vector2(self.predict_player_future_position(player))
+        vector_to_future_player = pygame.math.Vector2(player_future_vector.x - enemy_vector.x, player_future_vector.y - enemy_vector.y)
+        
+        current_velocity = self.velocity
+        required_velocity = vector_to_future_player.normalize() * self.speed
+        steering = pygame.math.Vector2(required_velocity.x - self.velocity.x, required_velocity.y - self.velocity.y)
+
+        self.velocity.x += steering.x
+        self.velocity.y += steering.y
+
         
     def update(self, delta_time):
+        velocity_x = self.rect.centerx - self.previous_position.x
+        velocity_y = self.rect.centery - self.previous_position.y
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
+
         if self.check_chase(self.game_world.player):
-            pass
+            self.pursue()
+            self.rect.centerx += self.velocity * delta_time
+            self.rect.centery += self.velocity * delta_time
         else:
             if not self.waypoints:
                 self.create_path()
-                path = self.waypoints #for testing
-                #print(path) #for testing
             self.follow_waypoints(delta_time)
+
+        self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
         
         
 
