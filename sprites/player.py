@@ -24,6 +24,8 @@ class Player(pygame.sprite.Sprite):
 
         self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
 
+        self.previous_position = pygame.math.Vector2()
+
         self.artifacts_collected = 0
     
     def animate(self, delta_time, x_direction, y_direction):

@@ -13,7 +13,7 @@ class Bandit(Enemy):
         self.y = 1280
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
-        self.speed = 100
+        self.speed = 200
 
         self.detection_radius = 5000 
         self.chase_radius = 250
@@ -148,19 +148,19 @@ class Bandit(Enemy):
         return(distance_to_player)
     
     def predict_player_future_position(self, player):
-        future_position_x = player.rect.centerx + player.velocity.x* self.game.delta_time
+        future_position_x = player.rect.centerx + player.velocity.x * self.game.delta_time
         future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time
         return((future_position_x, future_position_y))
 
     def pursue(self, player):
-        distance_to_player = self.get_distance_to_player(player)
         enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-
         player_future_vector = pygame.math.Vector2(self.predict_player_future_position(player))
         vector_to_future_player = pygame.math.Vector2(player_future_vector.x - enemy_vector.x, player_future_vector.y - enemy_vector.y)
-        
-        current_velocity = self.velocity
-        required_velocity = vector_to_future_player.normalize() * self.speed
+
+        if vector_to_future_player.magnitude() == 0:
+            required_velocity = pygame.math.Vector2(0, 0)
+        else:
+            required_velocity = vector_to_future_player.normalize() * self.speed
         steering = pygame.math.Vector2(required_velocity.x - self.velocity.x, required_velocity.y - self.velocity.y)
 
         self.velocity.x += steering.x
@@ -173,9 +173,11 @@ class Bandit(Enemy):
         self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
 
         if self.check_chase(self.game_world.player):
-            self.pursue()
-            self.rect.centerx += self.velocity * delta_time
-            self.rect.centery += self.velocity * delta_time
+            self.pursue(self.game_world.player)
+            self.waypoints = []
+            self.current_waypoint = 0
+            self.rect.centerx += self.velocity.x * delta_time
+            self.rect.centery += self.velocity.y * delta_time
         else:
             if not self.waypoints:
                 self.create_path()
