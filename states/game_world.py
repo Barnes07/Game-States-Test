@@ -29,8 +29,8 @@ class Game_World(State):
 
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
-        self.player.find_start_coordinates(self.map.final_map)
-        self.bandit.find_start_coordinates(self.map.final_map)
+        #self.player.find_start_coordinates(self.map.final_map)
+        #self.bandit.find_start_coordinates(self.map.final_map)
     
         self.time_since_start = 0
 
@@ -39,7 +39,7 @@ class Game_World(State):
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
         
-        
+
 
  
 
@@ -82,3 +82,4 @@ class Game_World(State):
 
         #self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
         
+

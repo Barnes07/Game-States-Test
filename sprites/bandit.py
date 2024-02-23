@@ -9,13 +9,13 @@ class Bandit(Enemy):
     def __init__ (self, game, group, actual_map_width, actual_map_height, game_world):
         super().__init__(game, group)
         self.game_world = game_world
-        self.x = 1280
-        self.y = 1280
+        self.x = 2000
+        self.y = 2000
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 200
 
-        self.detection_radius = 5000 
+        self.detection_radius = 2000 
         self.chase_radius = 250
         self.waypoints = []
         self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
@@ -27,9 +27,7 @@ class Bandit(Enemy):
         self.time_to_move_to_waypoint = 1
         self.current_waypoint = 0
 
-        self.previous_position = pygame.math.Vector2()
-        
-        
+        self.previous_position = pygame.math.Vector2()       
 
     def check_detection(self, player):
         check = False
@@ -141,51 +139,56 @@ class Bandit(Enemy):
     def set_coordinates(self, x, y):
         self.rect = self.current_image.get_rect(center = (x, y))
 
-    def get_distance_to_player(self, player):
-        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+    def get_distance_to_player(self, player): #method to calculate distance between player and enemy
+        enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery) 
         player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
         distance_to_player = player_vector.distance_to(enemy_vector)
         return(distance_to_player)
     
-    def predict_player_future_position(self, player):
+    def predict_player_future_position(self, player): #method to estimate the player's coordinates during the next frame
         future_position_x = player.rect.centerx + player.velocity.x * self.game.delta_time
-        future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time
+        future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time #these lines calculate the estimated future coordinates of player
         return((future_position_x, future_position_y))
 
-    def pursue(self, player):
+    def pursue(self, player): 
         enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
         player_future_vector = pygame.math.Vector2(self.predict_player_future_position(player))
-        vector_to_future_player = pygame.math.Vector2(player_future_vector.x - enemy_vector.x, player_future_vector.y - enemy_vector.y)
-
-        if vector_to_future_player.magnitude() == 0:
-            required_velocity = pygame.math.Vector2(0, 0)
+        vector_to_future_player = pygame.math.Vector2(player_future_vector.x - enemy_vector.x, player_future_vector.y - enemy_vector.y) #vector to estimated player position
+        
+        if vector_to_future_player.magnitude() == 0: #check if vector is zero to prevent error when attempting to normalise vector with 0 magnitude
+            required_velocity = pygame.math.Vector2(0,0)
         else:
-            required_velocity = vector_to_future_player.normalize() * self.speed
-        steering = pygame.math.Vector2(required_velocity.x - self.velocity.x, required_velocity.y - self.velocity.y)
+            required_velocity = vector_to_future_player.normalize() * self.speed #calculate the speed and direction needed to move towards estimated player position
 
-        self.velocity.x += steering.x
-        self.velocity.y += steering.y
+        steering = pygame.math.Vector2(required_velocity.x - self.velocity.x, required_velocity.y - self.velocity.y) #steering vector used to alter bandit's direction of travel
+
+        self.velocity.x += steering.x #update x component of velocity
+        self.velocity.y += steering.y #update y component of velocity
+    
+
 
         
     def update(self, delta_time):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y
-        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velocity at start of update method
 
         if self.check_chase(self.game_world.player):
             self.pursue(self.game_world.player)
-            self.waypoints = []
-            self.current_waypoint = 0
+            self.waypoints = [] #reset self.waypoints
+            self.current_waypoint = 0 #reset self.current_waypoint
             self.rect.centerx += self.velocity.x * delta_time
             self.rect.centery += self.velocity.y * delta_time
+
         else:
             if not self.waypoints:
                 self.create_path()
             self.follow_waypoints(delta_time)
+            print(self.waypoints)
+        
 
         self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
-        
-        
+
 
         
 

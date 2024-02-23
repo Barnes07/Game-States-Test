@@ -29,8 +29,10 @@ class Artifact(pygame.sprite.Sprite):
             self.get_picked_up()
             self.game_world.player.artifacts_collected += 1
             self.game_world.filled_height += self.game_world.fill_per_artifact #increments the height of the "filled" loot bag 
-            if self.game_world.player.speed + -20 > 0:
+            if self.game_world.player.speed + -20 > 100:
+                print(self.game_world.player.speed)
                 self.game_world.player.speed += -20
+                print(self.game_world.player.speed)
 
     
     def get_picked_up(self):
@@ -39,9 +41,6 @@ class Artifact(pygame.sprite.Sprite):
     def update(self):
         if self.alive():
             self.check_player_collision()
-
-
-
 
 
 

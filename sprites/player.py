@@ -11,8 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.game = game 
         self.game_world = game_world
         self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
-        self.x = 1380
-        self.y = 1380
+        self.x = 500
+        self.y = 500
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
@@ -91,13 +91,15 @@ class Player(pygame.sprite.Sprite):
         #Update location
         self.x += self.speed * delta_time * self.direction.x
         self.y += self.speed  * delta_time * self.direction.y
-        self.rect.centerx += self.speed * delta_time * self.direction.x #these two lines are needed to also update the x and y coordinates of the rectangle so that the x and y coordinates in the centre_player method(camera_group)are updated and allow the assets to move in the opposite direction to the player. 
+        self.rect.centerx += self.speed * delta_time * self.direction.x 
         self.rect.centery += self.speed * delta_time * self.direction.y
         self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
         #Animate the player
         self.animate(delta_time, self.direction.x, self.direction.y)
 
         self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
+
+
 
     def find_start_coordinates(self, map):
         for a in range (0, self.game_world.actual_map_width):
