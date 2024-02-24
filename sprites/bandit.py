@@ -165,6 +165,9 @@ class Bandit(Enemy):
         self.velocity.x += steering.x #update x component of velocity
         self.velocity.y += steering.y #update y component of velocity
     
+    def check_player_collision(self, player):
+        if pygame.sprite.collide_rect(self, player):
+            return(True)
 
 
         

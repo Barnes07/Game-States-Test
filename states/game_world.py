@@ -2,6 +2,7 @@ import pygame
 import os
 from states.state import State
 from states.pause_menu import PauseMenu
+from states.game_over import Game_Over
 from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
@@ -23,7 +24,7 @@ class Game_World(State):
         self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
 
-        self.instantiate_artifacts()
+        #self.instantiate_artifacts()
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         
 
@@ -58,6 +59,10 @@ class Game_World(State):
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, self.loot_bag_rect.bottom - self.filled_height, 50, self.filled_height) #updates dimensions of "filled" rectangle
         self.filled_loot_bag = pygame.draw.rect(self.game.screen, "yellow", self.filled_loot_bag_rect) #draws updated "filled" rectangle 
 
+    def check_game_over(self):
+        if self.bandit.check_player_collision(self.player):
+            new_state = Game_Over(self.game)
+            new_state.enter_state()
 
 
 
@@ -72,6 +77,10 @@ class Game_World(State):
 
         
         self.camera_group.update(delta_time, actions)
+
+        self.check_game_over()
+
+        
 
 
         

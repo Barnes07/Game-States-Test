@@ -6,6 +6,8 @@ from states.main_menu import Main_Menu
 
 
 
+
+
 class Game():
     def __init__(self):
         pygame.init()
