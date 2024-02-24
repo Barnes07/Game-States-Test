@@ -120,12 +120,16 @@ class Bandit(Enemy):
                 self.time_since_last_move = 0
     
     def find_start_coordinates(self, map):
+        #iterate through all blocks in the map grid
         for a in range (self.game_world.actual_map_width, 0, -1):
             for b in range(self.game_world.actual_map_height, 0, -1):
                 wall_count = 0
+                #iterate through neighbouring 8 blocks
                 for x in range (a-1, a+2):
                     for y in range(b-1, b+2):
+                        #check if the block is within map bounds
                         if 0 <= x < self.game_world.actual_map_width and 0 <= y < self.game_world.actual_map_height:
+                            #check if block is a wall
                             if map[x][y] == 0:
                                 wall_count = wall_count + 1
                         else:
