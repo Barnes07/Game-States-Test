@@ -80,6 +80,8 @@ class Player(pygame.sprite.Sprite):
                 if pygame.sprite.collide_rect(self, sprite):
                     self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
 
+
+
     def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y

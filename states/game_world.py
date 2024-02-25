@@ -6,6 +6,7 @@ from states.game_over import Game_Over
 from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
+from sprites.exit_door import Exit_Door
 from sprites.camera_group import CameraGroup
 from map_generation.cellular_automata import Cellular_Automata
 
@@ -27,6 +28,7 @@ class Game_World(State):
         #self.instantiate_artifacts()
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         
+        self.exit_door = Exit_Door(self.game, self, self.camera_group)
 
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
@@ -34,6 +36,8 @@ class Game_World(State):
             
         self.player.find_start_coordinates(self.map.final_map)
         self.bandit.find_start_coordinates(self.map.final_map)
+        self.exit_door.get_random_starting_coordinates(self.map.final_map)
+
     
         self.time_since_start = 0
 
@@ -67,8 +71,6 @@ class Game_World(State):
             new_state.enter_state()
 
 
-
-
                 
     def update(self, delta_time, actions):
         if actions["escape"]:
@@ -78,9 +80,16 @@ class Game_World(State):
         self.bandit.update(delta_time)
 
         
+        self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
+        self.exit_door.check_door_proximity(self.player)
+
         self.camera_group.update(delta_time, actions)
 
+
+
         self.check_game_over()
+
+        
 
         
 
@@ -90,6 +99,8 @@ class Game_World(State):
         display.fill("black")
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
+
+
 
         #self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
         

@@ -109,7 +109,7 @@ class Game():
             text_rect = text.get_rect(center = (x,y))
             text_background = pygame.Rect(x-(width//2), y-(height//2), width, height)
             pygame.draw.rect(surface, background_colour, text_background, border_radius = 10)
-            surface.blit(text, text_rect)
+            surface.blit(text, text_rect)   
 
     def load_assets(self):
         #Instantiate pointers to directories
