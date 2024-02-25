@@ -27,6 +27,8 @@ class Player(pygame.sprite.Sprite):
         self.previous_position = pygame.math.Vector2()
 
         self.artifacts_collected = 0
+
+
     
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
@@ -102,6 +104,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def find_start_coordinates(self, map):
+        found = False
         #iterate through all blocks in the map grid
         for a in range (0, self.game_world.actual_map_width):
             for b in range(0, self.game_world.actual_map_height):
@@ -120,8 +123,12 @@ class Player(pygame.sprite.Sprite):
                     #set player starting coordinates to those stored in a and b
                     a = a * self.game.block_size
                     b = b * self.game.block_size
-                    self.set_coordinates(a, b)
-                    
+                    if found == False:
+                        self.set_coordinates(a, b)
+                        found = True
+                        print("Starting cooridnates found at ", a, b)
+
+
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))

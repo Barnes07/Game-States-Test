@@ -20,6 +20,7 @@ class Bandit(Enemy):
         self.waypoints = []
         self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
 
+
         self.actual_map_width = actual_map_width
         self.actual_map_height = actual_map_height
 
@@ -120,6 +121,7 @@ class Bandit(Enemy):
                 self.time_since_last_move = 0
     
     def find_start_coordinates(self, map):
+        found = False
         #iterate through all blocks in the map grid
         for a in range (self.game_world.actual_map_width, 0, -1):
             for b in range(self.game_world.actual_map_height, 0, -1):
@@ -136,9 +138,13 @@ class Bandit(Enemy):
                             wall_count = wall_count + 1
                 if wall_count == 0:
                     #set bandit starting coordinates to those stored in a and b
-                    start_x = a * self.game.block_size
-                    start_y = b * self.game.block_size
-                    self.set_coordinates(start_x, start_y)
+                    a = a * self.game.block_size
+                    b = b * self.game.block_size
+                    if found == False:
+                        self.set_coordinates(a, b)
+                        found = True
+                        print("Starting cooridnates found at ", a, b)
+
                     
     def set_coordinates(self, x, y):
         self.rect = self.current_image.get_rect(center = (x, y))
@@ -191,7 +197,7 @@ class Bandit(Enemy):
             if not self.waypoints:
                 self.create_path()
             self.follow_waypoints(delta_time)
-            print(self.waypoints)
+
         
 
         self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
