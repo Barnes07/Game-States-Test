@@ -66,6 +66,7 @@ class Flute_Playing(State):
         if self.check_pressed_key():
             self.flag = True
             print("true")
+            self.time_since_last_key = 4
 
 
         
