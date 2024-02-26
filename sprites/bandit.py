@@ -143,7 +143,7 @@ class Bandit(Enemy):
                     if found == False:
                         self.set_coordinates(a, b)
                         found = True
-                        print("Starting cooridnates found at ", a, b)
+
 
                     
     def set_coordinates(self, x, y):

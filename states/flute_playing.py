@@ -4,6 +4,7 @@ import random
 from states.state import State
 from states.game_over import Game_Over
 
+
 class Flute_Playing(State):
     def __init__(self, game):
         super().__init__(game)
@@ -16,6 +17,8 @@ class Flute_Playing(State):
         self.time_since_last_key = 0
 
         self.flag = False
+
+        self.keys_pressed = 0
 
 
     def display_random_key(self, display):
@@ -38,8 +41,7 @@ class Flute_Playing(State):
         keys = pygame.key.get_pressed()
         if self.current_key == "a":
             if keys[pygame.K_a]:
-                return(True)
-                
+                return(True)           
         if self.current_key == "b":
             if keys[pygame.K_b]:
                 return(True)
@@ -55,6 +57,9 @@ class Flute_Playing(State):
         return(False)
 
     def main(self, delta_time):
+        if self.keys_pressed == 5:
+            new_state = Game_World(self.game)
+            new_state.enter_state()
         self.time_since_last_key += delta_time
         if self.time_since_last_key > 3:
             if self.flag == False:
@@ -67,11 +72,7 @@ class Flute_Playing(State):
             self.flag = True
             print("true")
             self.time_since_last_key = 4
-
-
-        
-
-
+            self.keys_pressed += 1
 
     def update(self, delta_time, actions):
         self.main(delta_time)

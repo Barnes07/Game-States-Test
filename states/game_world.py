@@ -1,9 +1,9 @@
 import pygame
 import os
+import random
 from states.state import State
 from states.pause_menu import PauseMenu
 from states.game_over import Game_Over
-from states.flute_playing import Flute_Playing
 from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
@@ -33,13 +33,10 @@ class Game_World(State):
 
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
-
-            
         self.player.find_start_coordinates(self.map.final_map)
         self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
 
-    
         self.time_since_start = 0
 
         self.filled_height = 0
@@ -47,11 +44,6 @@ class Game_World(State):
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
         
-
-
- 
-
-
     #def time(self, delta_time):
     #self.time_since_start += delta_time
     #self.time_since_start = round(self.time_since_start)
@@ -76,9 +68,7 @@ class Game_World(State):
             if actions["flute"]:
                 new_state = Flute_Playing(self.game)
                 new_state.enter_state()
-
-
-                
+         
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
@@ -86,23 +76,17 @@ class Game_World(State):
         self.player.update(delta_time, actions)
         self.bandit.update(delta_time)
 
-        
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
 
         self.check_open_door(actions)
 
         self.camera_group.update(delta_time, actions)
 
-
+        #if actions["start"] == False: #if enter key is pressed, player can pass through the walls
+            #self.player.check_wall_collision(delta_time)
 
         self.check_game_over()
-
-        
-
-        
-
-
-        
+  
     def render(self, display):
         display.fill("black")
         self.camera_group.render(display, self.player)
@@ -112,4 +96,103 @@ class Game_World(State):
 
         #self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
         
+
+class Flute_Playing(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.game = game 
+        self.flute_playing_image = pygame.image.load(os.path.join(self.game.assets_dir, "flute", "flute_playing.png"))
+        self.flute_playing_image_rect = self.flute_playing_image.get_rect(center = (self.game.SCREEN_WIDTH//2, (self.game.SCREEN_HEIGHT//2)))
+
+        self.current_key = "a"
+        self.previous_key = 0
+        self.time_since_last_key = 0
+        self.flag = False
+        self.keys_pressed = 0
+
+    def display_random_key(self, display):
+        self.game.text(display, (self.game.SCREEN_WIDTH)/2, (self.game.SCREEN_HEIGHT)/2 - 200, 215, 100, self.current_key, "white", "black")
+
+    def generate_random_key(self):
+        random_letter = random.randint(1,5)
+        if random_letter == 1:
+            if random_letter == self.previous_key:
+                self.current_key = (self.generate_random_key())
+            else:
+                self.current_key = "a"
+
+        elif random_letter == 2:
+            if random_letter == self.previous_key:
+                self.current_key = (self.generate_random_key())
+            else:
+                self.current_key = "b"
+
+        elif random_letter == 3:
+            if random_letter == self.previous_key:
+                self.current_key = (self.generate_random_key())
+            else:
+                self.current_key = "c"
+
+        elif random_letter == 4:
+            if random_letter == self.previous_key:
+                self.current_key = (self.generate_random_key())
+            else:
+                self.current_key = "d"
+
+        elif random_letter == 5:
+            if random_letter == self.previous_key:
+                self.current_key = (self.generate_random_key())
+            else:
+                self.current_key = "e"
+        
+        self.previous_key = random_letter
+
+        
+
+
+    def check_pressed_key(self):
+        keys = pygame.key.get_pressed()
+        if self.current_key == "a":
+            if keys[pygame.K_a]:  
+                return(True)  
+         
+        if self.current_key == "b":
+            if keys[pygame.K_b]:
+                return(True)
+        if self.current_key == "c":
+            if keys[pygame.K_c]:
+                return(True)
+        if self.current_key == "d":
+            if keys[pygame.K_d]:
+                return(True)
+        if self.current_key == "e":
+            if keys[pygame.K_e]:
+                return(True)
+        return(False)
+
+    def main(self, delta_time):
+        if self.keys_pressed == 5:
+            new_state = Game_World(self.game)
+            new_state.enter_state()
+        self.time_since_last_key += delta_time
+        if self.time_since_last_key > 3:
+            if self.flag == False:
+                new_state = Game_Over(self.game)
+                new_state.enter_state()
+            self.time_since_last_key = 0
+            self.generate_random_key()
+            self.flag = False
+        if self.check_pressed_key():
+            self.flag = True
+            self.time_since_last_key = 4
+            self.keys_pressed += 1
+
+    def update(self, delta_time, actions):
+        self.main(delta_time)
+
+    def render(self, display):
+        display.fill("black")
+        display.blit(self.flute_playing_image, self.flute_playing_image_rect)
+        self.display_random_key(display)
+
 

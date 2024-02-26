@@ -5,9 +5,6 @@ import time
 from states.main_menu import Main_Menu
 
 
-
-
-
 class Game():
     def __init__(self):
         pygame.init()
@@ -87,10 +84,6 @@ class Game():
                 self.actions["click"] = False
             
             
-            
-
-
-
     def update(self):
         self.states_stack[len(self.states_stack)-1].update(self.delta_time, self.actions)
         

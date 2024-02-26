@@ -128,7 +128,7 @@ class Player(pygame.sprite.Sprite):
                     if found == False:
                         self.set_coordinates(a, b)
                         found = True
-                        print("Starting cooridnates found at ", a, b)
+
 
 
 
