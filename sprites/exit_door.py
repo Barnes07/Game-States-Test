@@ -53,6 +53,11 @@ class Exit_Door(pygame.sprite.Sprite):
                     #if the player is colliding with the door in the horizontal direction, reverse the movement made in the x direction
                     player.rect.x -= player.speed * player.direction.x * delta_time
 
+        def check_door_proximity(self, player):
+            if self.collision_rect.left <= player.rect.centerx <= self.collision_rect.right:
+                if self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery - self.game.block_size): #negative since (0,0) is top left
+                    return(True)
+
 
 
                     

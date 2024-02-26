@@ -3,6 +3,7 @@ import os
 from states.state import State
 from states.pause_menu import PauseMenu
 from states.game_over import Game_Over
+from states.flute_playing import Flute_Playing
 from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
@@ -25,7 +26,7 @@ class Game_World(State):
         self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
         self.map.update()
 
-        #self.instantiate_artifacts()
+        self.instantiate_artifacts()
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
@@ -70,6 +71,12 @@ class Game_World(State):
             new_state = Game_Over(self.game)
             new_state.enter_state()
 
+    def check_open_door(self, actions):
+        if self.exit_door.check_door_proximity(self.player):
+            if actions["flute"]:
+                new_state = Flute_Playing(self.game)
+                new_state.enter_state()
+
 
                 
     def update(self, delta_time, actions):
@@ -81,7 +88,8 @@ class Game_World(State):
 
         
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
-        self.exit_door.check_door_proximity(self.player)
+
+        self.check_open_door(actions)
 
         self.camera_group.update(delta_time, actions)
 
