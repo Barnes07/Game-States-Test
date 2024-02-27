@@ -37,12 +37,17 @@ class Game_World(State):
         self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
 
-        self.time_since_start = 0
 
         self.filled_height = 0
         self.loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, 100)
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
+
+        self.time_since_last_frame = 0
+        self.time_mins = 0
+        self.time_secs = 0
+
+
 
 
         
@@ -69,12 +74,16 @@ class Game_World(State):
                 new_state = Flute_Playing(self.game)
                 new_state.enter_state()
 
-    #def time(self, delta_time):
-        #self.time_since_start += delta_time
-        #self.time_since_start = str(round(self.time_since_start))
+    def calculate_time(self, delta_time):
+        self.time_since_last_frame += delta_time
+        if self.time_since_last_frame > 1:
+            self.time_since_last_frame = 0
+            self.time_secs += 1
+            if self.time_secs == 60:
+                self.time_mins +=1
+                self.time_secs = 0
 
-
-         
+   
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
@@ -83,15 +92,20 @@ class Game_World(State):
         self.bandit.update(delta_time)
 
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
-
         self.check_open_door(actions)
-
         self.camera_group.update(delta_time, actions)
-
         #if actions["start"] == False: #if enter key is pressed, player can pass through the walls
             #self.player.check_wall_collision(delta_time)
 
         self.check_game_over()
+
+        self.calculate_time(delta_time)
+
+
+
+
+
+
 
 
   
@@ -100,9 +114,11 @@ class Game_World(State):
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
 
+        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins) + ": " + str(self.time_secs)), "white", "black")
 
 
-        self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
+
+
 
 
 class Flute_Playing(State):
