@@ -19,8 +19,6 @@ class Game_World(State):
         super().__init__(game)
         self.camera_group = CameraGroup(self.game)
 
-        #Jungle Map
-        #Potential isometric implementation https://www.youtube.com/watch?v=gE2gTCwLdFM
         self.actual_map_width = 50
         self.actual_map_height = 50
         self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
@@ -37,7 +35,6 @@ class Game_World(State):
         self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
 
-
         self.filled_height = 0
         self.loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, 100)
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
@@ -48,11 +45,6 @@ class Game_World(State):
         self.time_secs = time_secs
 
 
-
-
-        
-
-        
     def instantiate_artifacts(self):
         for artifact in range (0,self.game.number_of_artifacts):
             artifact = Artifact(self.game, self, self.camera_group)
@@ -114,7 +106,7 @@ class Game_World(State):
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
 
-        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins) + ": " + str(self.time_secs)), "white", "black")
+        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins).zfill(2) + ": " + str(self.time_secs).zfill(2)), "white", "black")
 
 
 
@@ -166,9 +158,6 @@ class Flute_Playing(State):
         
         self.previous_key = random_letter
 
-        
-
-
     def check_pressed_key(self):
         keys = pygame.key.get_pressed()
         if self.current_key == "a":
@@ -207,7 +196,6 @@ class Flute_Playing(State):
             self.keys_pressed += 1
             print(self.current_key)
 
-    
     def calculate_time(self, delta_time):
         self.time_since_last_frame += delta_time
         if self.time_since_last_frame > 1:
@@ -226,7 +214,7 @@ class Flute_Playing(State):
         display.blit(self.flute_playing_image, self.flute_playing_image_rect)
         self.display_random_key(display)
 
-        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins) + ": " + str(self.time_secs)), "white", "black")
+        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins).zfill(2) + ": " + str(self.time_secs).zfill(2)), "white", "black")
 
         
 
