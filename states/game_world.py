@@ -4,6 +4,7 @@ import random
 from states.state import State
 from states.pause_menu import PauseMenu
 from states.game_over import Game_Over
+from states.game_complete import Game_Complete
 from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
@@ -65,6 +66,9 @@ class Game_World(State):
             if actions["flute"]:
                 new_state = Flute_Playing(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
+                self.game.number_of_levels_completed += 1
+
+                    
 
     def calculate_time(self, delta_time):
         self.time_since_last_frame += delta_time
@@ -180,8 +184,12 @@ class Flute_Playing(State):
 
     def main(self, delta_time):
         if self.keys_pressed == 5:
-            new_state = Game_World(self.game, self.time_secs, self.time_mins)
-            new_state.enter_state()
+            if self.game.number_of_levels_completed < self.game.number_of_total_levels:
+                new_state = Game_World(self.game, self.time_secs, self.time_mins)
+                new_state.enter_state()
+            else:
+                new_state = Game_Complete(self.game)
+                new_state.enter_state()
         self.time_since_last_key += delta_time
         if self.time_since_last_key > 3:
             if self.game_continue_flag == False:
