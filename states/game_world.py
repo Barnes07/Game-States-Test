@@ -22,7 +22,7 @@ class Game_World(State):
 
         self.actual_map_width = 50
         self.actual_map_height = 50
-        self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height ,61 , 4, 4, self.camera_group, self.game)
+        self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height, 61 , 4, 4, self.camera_group, self.game)
         self.map.update()
 
         self.instantiate_artifacts()
@@ -188,7 +188,7 @@ class Flute_Playing(State):
                 new_state = Game_World(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
             else:
-                new_state = Game_Complete(self.game)
+                new_state = Game_Complete(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
         self.time_since_last_key += delta_time
         if self.time_since_last_key > 3:
@@ -202,7 +202,7 @@ class Flute_Playing(State):
             self.game_continue_flag = True
             self.time_since_last_key = 4
             self.keys_pressed += 1
-            print(self.current_key)
+ 
 
     def calculate_time(self, delta_time):
         self.time_since_last_frame += delta_time

@@ -3,7 +3,7 @@ import os
 from states.state import State
 
 class Game_Complete(State):
-    def __init__(self, game):
+    def __init__(self, game, time_secs, time_mins):
         super().__init__(game)
         self.game = game
 
@@ -18,6 +18,13 @@ class Game_Complete(State):
         self.menu_options = {0:"none", 1:"main_menu"} #dictionary of menu options
         self.index = 0 #index for menu_options dictionary 
 
+        self.time_secs = time_secs
+        self.time_mins = time_mins
+
+        self.game.number_of_levels_completed = 0
+
+        self.calculate_final_score()
+
     def check_clicks(self, actions):
         if actions["click"]: #if mouse has been clicked 
             if self.main_menu_button_rect.collidepoint(actions["mouse_pos"]): #if the mouse is colliding with text box
@@ -28,6 +35,24 @@ class Game_Complete(State):
          if self.menu_options[self.index] == "main_menu": #if the index points to "main_menu"
             while len(self.game.states_stack) > 1:
                 self.game.states_stack.pop()
+
+    def calculate_final_score(self):
+        if self.time_mins < 1:
+            time_factor = 100
+        elif self.time_mins < 2:
+            time_factor = 90
+        elif self.time_mins < 3:
+            time_factor = 80
+        elif self.time_mins < 4:
+            time_factor = 70
+        elif self.time_mins < 5:
+            time_factor = 60
+        else:
+            time_factor = 50
+
+        score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
+
+        print(score)
 
     def update(self, delta_time, actions):
         self.check_clicks(actions)
