@@ -43,10 +43,10 @@ class Game_World(State):
         self.loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, 100)
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
+
+
         
-    #def time(self, delta_time):
-    #self.time_since_start += delta_time
-    #self.time_since_start = round(self.time_since_start)
+
         
     def instantiate_artifacts(self):
         for artifact in range (0,self.game.number_of_artifacts):
@@ -68,6 +68,12 @@ class Game_World(State):
             if actions["flute"]:
                 new_state = Flute_Playing(self.game)
                 new_state.enter_state()
+
+    #def time(self, delta_time):
+        #self.time_since_start += delta_time
+        #self.time_since_start = str(round(self.time_since_start))
+
+
          
     def update(self, delta_time, actions):
         if actions["escape"]:
@@ -86,6 +92,8 @@ class Game_World(State):
             #self.player.check_wall_collision(delta_time)
 
         self.check_game_over()
+
+
   
     def render(self, display):
         display.fill("black")
@@ -94,8 +102,8 @@ class Game_World(State):
 
 
 
-        #self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
-        
+        self.score_text = self.game.text(display, (self.game.SCREEN_WIDTH - 125), (self.game.SCREEN_HEIGHT) - 600, 200, 100, self.time_since_start, "white", "black")
+
 
 class Flute_Playing(State):
     def __init__(self, game):
@@ -104,46 +112,37 @@ class Flute_Playing(State):
         self.flute_playing_image = pygame.image.load(os.path.join(self.game.assets_dir, "flute", "flute_playing.png"))
         self.flute_playing_image_rect = self.flute_playing_image.get_rect(center = (self.game.SCREEN_WIDTH//2, (self.game.SCREEN_HEIGHT//2)))
 
-        self.current_key = "a"
         self.previous_key = 0
+        self.current_key = "a"
+        self.generate_random_key()
+        
         self.time_since_last_key = 0
-        self.flag = False
+        self.game_continue_flag = False
         self.keys_pressed = 0
 
     def display_random_key(self, display):
         self.game.text(display, (self.game.SCREEN_WIDTH)/2, (self.game.SCREEN_HEIGHT)/2 - 200, 215, 100, self.current_key, "white", "black")
 
     def generate_random_key(self):
-        random_letter = random.randint(1,5)
+        found = False
+        while found == False:
+            random_letter = random.randint(1,5)
+            if random_letter != self.previous_key:
+                found = True
         if random_letter == 1:
-            if random_letter == self.previous_key:
-                self.current_key = (self.generate_random_key())
-            else:
-                self.current_key = "a"
+            self.current_key = "a"
 
         elif random_letter == 2:
-            if random_letter == self.previous_key:
-                self.current_key = (self.generate_random_key())
-            else:
-                self.current_key = "b"
+            self.current_key = "b"
 
         elif random_letter == 3:
-            if random_letter == self.previous_key:
-                self.current_key = (self.generate_random_key())
-            else:
-                self.current_key = "c"
+            self.current_key = "c"
 
         elif random_letter == 4:
-            if random_letter == self.previous_key:
-                self.current_key = (self.generate_random_key())
-            else:
-                self.current_key = "d"
+            self.current_key = "d"
 
         elif random_letter == 5:
-            if random_letter == self.previous_key:
-                self.current_key = (self.generate_random_key())
-            else:
-                self.current_key = "e"
+            self.current_key = "e"
         
         self.previous_key = random_letter
 
@@ -176,16 +175,17 @@ class Flute_Playing(State):
             new_state.enter_state()
         self.time_since_last_key += delta_time
         if self.time_since_last_key > 3:
-            if self.flag == False:
+            if self.game_continue_flag == False:
                 new_state = Game_Over(self.game)
                 new_state.enter_state()
             self.time_since_last_key = 0
             self.generate_random_key()
-            self.flag = False
+            self.game_continue_flag = False
         if self.check_pressed_key():
-            self.flag = True
+            self.game_continue_flag = True
             self.time_since_last_key = 4
             self.keys_pressed += 1
+            print(self.current_key)
 
     def update(self, delta_time, actions):
         self.main(delta_time)
