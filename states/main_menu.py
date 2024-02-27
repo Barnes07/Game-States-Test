@@ -34,7 +34,7 @@ class Main_Menu(State):
 
     def transition_state(self):
         if self.menu_options[self.index] == "Play":
-            new_state = Game_World(self.game)
+            new_state = Game_World(self.game, 0, 0)
             new_state.enter_state() #Adds new state to top of the stack
             self.index = 0
         elif self.menu_options[self.index] == "Settings":

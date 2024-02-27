@@ -6,7 +6,7 @@ from states.game_over import Game_Over
 
 
 class Flute_Playing(State):
-    def __init__(self, game):
+    def __init__(self, game, time_secs, time_mins):
         super().__init__(game)
         self.game = game 
         self.flute_playing_image = pygame.image.load(os.path.join(self.game.assets_dir, "flute", "flute_playing.png"))
@@ -19,6 +19,9 @@ class Flute_Playing(State):
         self.flag = False
 
         self.keys_pressed = 0
+
+        self.time_secs = time_secs
+        self.time_mins = time_mins
 
 
     def display_random_key(self, display):
@@ -74,6 +77,15 @@ class Flute_Playing(State):
             self.time_since_last_key = 4
             self.keys_pressed += 1
 
+    def calculate_time(self, delta_time):
+        self.time_since_last_frame += delta_time
+        if self.time_since_last_frame > 1:
+            self.time_since_last_frame = 0
+            self.time_secs += 1
+            if self.time_secs == 60:
+                self.time_mins +=1
+                self.time_secs = 0
+
     def update(self, delta_time, actions):
         self.main(delta_time)
 
@@ -82,3 +94,5 @@ class Flute_Playing(State):
         display.blit(self.flute_playing_image, self.flute_playing_image_rect)
 
         self.display_random_key(display)
+
+        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins) + ": " + str(self.time_secs)), "white", "black")

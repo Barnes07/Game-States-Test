@@ -15,7 +15,7 @@ from sprites.floor import Floor
 from sprites.wall import Wall
 
 class Game_World(State):
-    def __init__(self, game):
+    def __init__(self, game, time_secs, time_mins):
         super().__init__(game)
         self.camera_group = CameraGroup(self.game)
 
@@ -44,8 +44,8 @@ class Game_World(State):
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
 
         self.time_since_last_frame = 0
-        self.time_mins = 0
-        self.time_secs = 0
+        self.time_mins = time_mins
+        self.time_secs = time_secs
 
 
 
@@ -71,7 +71,7 @@ class Game_World(State):
     def check_open_door(self, actions):
         if self.exit_door.check_door_proximity(self.player):
             if actions["flute"]:
-                new_state = Flute_Playing(self.game)
+                new_state = Flute_Playing(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
 
     def calculate_time(self, delta_time):
@@ -122,7 +122,7 @@ class Game_World(State):
 
 
 class Flute_Playing(State):
-    def __init__(self, game):
+    def __init__(self, game, time_secs, time_mins):
         super().__init__(game)
         self.game = game 
         self.flute_playing_image = pygame.image.load(os.path.join(self.game.assets_dir, "flute", "flute_playing.png"))
@@ -135,6 +135,10 @@ class Flute_Playing(State):
         self.time_since_last_key = 0
         self.game_continue_flag = False
         self.keys_pressed = 0
+
+        self.time_secs = time_secs
+        self.time_mins = time_mins
+        self.time_since_last_frame = 0
 
     def display_random_key(self, display):
         self.game.text(display, (self.game.SCREEN_WIDTH)/2, (self.game.SCREEN_HEIGHT)/2 - 200, 215, 100, self.current_key, "white", "black")
@@ -187,7 +191,7 @@ class Flute_Playing(State):
 
     def main(self, delta_time):
         if self.keys_pressed == 5:
-            new_state = Game_World(self.game)
+            new_state = Game_World(self.game, self.time_secs, self.time_mins)
             new_state.enter_state()
         self.time_since_last_key += delta_time
         if self.time_since_last_key > 3:
@@ -203,12 +207,27 @@ class Flute_Playing(State):
             self.keys_pressed += 1
             print(self.current_key)
 
+    
+    def calculate_time(self, delta_time):
+        self.time_since_last_frame += delta_time
+        if self.time_since_last_frame > 1:
+            self.time_since_last_frame = 0
+            self.time_secs += 1
+            if self.time_secs == 60:
+                self.time_mins +=1
+                self.time_secs = 0
+
     def update(self, delta_time, actions):
         self.main(delta_time)
+        self.calculate_time(delta_time)
 
     def render(self, display):
         display.fill("black")
         display.blit(self.flute_playing_image, self.flute_playing_image_rect)
         self.display_random_key(display)
+
+        self.game.text(display, 100, 50, 150, 50, (str(self.time_mins) + ": " + str(self.time_secs)), "white", "black")
+
+        
 
 
