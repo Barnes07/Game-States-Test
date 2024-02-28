@@ -87,7 +87,6 @@ class Game_World(State):
                 self.game.number_of_levels_completed += 1
 
                     
-
     def calculate_time(self, delta_time):
         self.time_since_last_frame += delta_time
         if self.time_since_last_frame > 1:
@@ -96,22 +95,28 @@ class Game_World(State):
             if self.time_secs == 60:
                 self.time_mins +=1
                 self.time_secs = 0
+        
+    def check_valid_climb(self, actions, delta_time):
+        if actions["start"] and self.stam_filled_width > 0: #If "enter" is pressed and player has sufficient stamina
+            pass #do not check for collisions between player and walls
+        else:
+            self.player.check_wall_collision(delta_time) #check for collision between player and walls
 
     def update_stamina(self, actions, delta_time):
-        if actions["start"]:
-            self.time_climbed += delta_time
-            self.time_walking = 0
-            if self.time_climbed > 1:
-                self.time_climbed = 0
-                if self.stam_filled_width - 10 > 0:
-                    self.stam_filled_width -= 10
+        if actions["start"]: #If the enter key is being pressed
+            self.time_climbed += delta_time #increment time_climbed by the time elapsed since the last frame
+            self.time_walking = 0 #reset time_walking attribute
+            if self.time_climbed > 1: #if one second has elapsed
+                self.time_climbed = 0 #reset the time_climbed attribute
+                if self.stam_filled_width - 10 > 0: 
+                    self.stam_filled_width -= 10 #only decrease the stamina if it will remain greater than 0
         else:
-            self.time_walking += delta_time
-            self.time_climbed = 0
-            if self.time_walking > 1:
-                self.time_walking = 0
-                if self.stam_filled_width+ 10 < 100: #should be <=
-                    self.stam_filled_width += 10
+            self.time_walking += delta_time #increment time_walking attribute by time since last frame
+            self.time_climbed = 0 #reset time_climbed attribute
+            if self.time_walking > 1: #if a second has elapsed
+                self.time_walking = 0 #reset time_walking attribute
+                if self.stam_filled_width+ 10 < 100: 
+                    self.stam_filled_width += 10 #only increase the stamina if it will remain less than 100
 
 
    
@@ -131,11 +136,9 @@ class Game_World(State):
         self.calculate_time(delta_time)
 
         self.update_stamina(actions, delta_time)
+        self.check_valid_climb(actions, delta_time)
 
-        if actions["start"] and self.stam_filled_width > 0:
-            pass
-        else:
-            self.player.check_wall_collision(delta_time)
+
                 
 
             

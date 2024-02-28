@@ -78,13 +78,11 @@ class Player(pygame.sprite.Sprite):
             check = isinstance(sprite, Wall) #assign boolean value depending on if the sprite is wall or not
             if check == True:
                 if pygame.sprite.collide_rect(self, sprite): #if the player and a wall is colliding
-                    up_rectangle = self.rect.move(0, self.game.block_size/2) #temporarily move player rectangle up
-                    down_rectangle = self.rect.move(0, -self.game.block_size/2) #temporarily move player rectangle up
-                    if sprite.rect.colliderect(up_rectangle) or sprite.rect.colliderect(down_rectangle):
+                    if sprite.rect.collidepoint(self.rect.centerx, self.rect.centery + self.game.block_size) or sprite.rect.collidepoint(self.rect.centerx, self.rect.centery - self.game.block_size):
+                        #if player is colliding with wall in the y plane
                         self.rect.y -= self.speed * self.direction.y * delta_time #reverse player movement in y direction
-                    left_rectangle = self.rect.move(-self.game.block_size/2, 0) #temporarily move player rectangle left
-                    right_rectnagle = self.rect.move(self.game.block_size/2, 0) #temporarily move player rectangle right
-                    if sprite.rect.colliderect(left_rectangle) or sprite.rect.colliderect(right_rectnagle):
+                    if sprite.rect.collidepoint(self.rect.centerx + self.game.block_size, self.rect.centery) or sprite.rect.collidepoint(self.rect.centerx - self.game.block_size, self.rect.centery):
+                        #if the player is colliding with wall in the x plane
                         self.rect.x -= self.speed * self.direction.x * delta_time #reverse player movement in x direction
 
 
