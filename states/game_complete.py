@@ -52,7 +52,6 @@ class Game_Complete(State):
 
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
 
-        print(score)
 
     def update(self, delta_time, actions):
         self.check_clicks(actions)

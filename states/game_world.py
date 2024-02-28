@@ -20,27 +20,40 @@ class Game_World(State):
         super().__init__(game)
         self.camera_group = CameraGroup(self.game)
 
+        #Map
         self.actual_map_width = 50
         self.actual_map_height = 50
-        self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height, 61 , 4, 4, self.camera_group, self.game)
+        self.wall_density = 61
+        self.wall_count_variable = 4
+        self.iterations = 4
+        self.map = Cellular_Automata(self.actual_map_width ,self.actual_map_height, self.wall_density , self.wall_count_variable, self.iterations, self.camera_group, self.game)
         self.map.update()
 
+        #object instantiations 
         self.instantiate_artifacts()
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
-        
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
-
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
         
+        #finding start coordinates
         self.player.find_start_coordinates(self.map.final_map)
         self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
 
+        #loot bag
         self.filled_height = 0
         self.loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, 100)
         self.fill_per_artifact = self.loot_bag_rect.height/self.game.number_of_artifacts
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, 25, 50, self.filled_height)
 
+        #Stamina bar
+        self.stam_filled_width = 100
+        self.stamina_rect = pygame.Rect(self.game.SCREEN_WIDTH - 125, self.game.SCREEN_HEIGHT - 50, 100, 25)
+        self.filled_stamina_rect = pygame.Rect(self.game.SCREEN_WIDTH - 125, self.game.SCREEN_HEIGHT  - 50, self.stam_filled_width, 25)
+        self.time_climbed = 0
+        self.time_walking = 0
+
+        #Timer
         self.time_since_last_frame = 0
         self.time_mins = time_mins
         self.time_secs = time_secs
@@ -55,6 +68,11 @@ class Game_World(State):
         self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect) #background, grey part of loot bag
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, self.loot_bag_rect.bottom - self.filled_height, 50, self.filled_height) #updates dimensions of "filled" rectangle
         self.filled_loot_bag = pygame.draw.rect(self.game.screen, "yellow", self.filled_loot_bag_rect) #draws updated "filled" rectangle 
+
+    def draw_stamina(self):
+        self.stamina_bar = pygame.draw.rect(self.game.screen, "grey", self.stamina_rect) #background, grey part of loot bag
+        self.filled_stamina_rect = pygame.Rect(self.stamina_bar.left, self.game.SCREEN_HEIGHT - 50, self.stam_filled_width, 25)
+        self.filled_stamina_bar = pygame.draw.rect(self.game.screen, "green", self.filled_stamina_rect) #draws updated "filled" rectangle 
 
     def check_game_over(self):
         if self.bandit.check_player_collision(self.player):
@@ -79,6 +97,23 @@ class Game_World(State):
                 self.time_mins +=1
                 self.time_secs = 0
 
+    def update_stamina(self, actions, delta_time):
+        if actions["start"]:
+            self.time_climbed += delta_time
+            self.time_walking = 0
+            if self.time_climbed > 1:
+                self.time_climbed = 0
+                if self.stam_filled_width - 10 > 0:
+                    self.stam_filled_width -= 10
+        else:
+            self.time_walking += delta_time
+            self.time_climbed = 0
+            if self.time_walking > 1:
+                self.time_walking = 0
+                if self.stam_filled_width+ 10 < 100: #should be <=
+                    self.stam_filled_width += 10
+
+
    
     def update(self, delta_time, actions):
         if actions["escape"]:
@@ -90,12 +125,22 @@ class Game_World(State):
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
         self.check_open_door(actions)
         self.camera_group.update(delta_time, actions)
-        #if actions["start"] == False: #if enter key is pressed, player can pass through the walls
-            #self.player.check_wall_collision(delta_time)
 
         self.check_game_over()
 
         self.calculate_time(delta_time)
+
+        self.update_stamina(actions, delta_time)
+
+        if actions["start"] and self.stam_filled_width > 0:
+            pass
+        else:
+            self.player.check_wall_collision(delta_time)
+                
+
+            
+
+        
 
 
 
@@ -109,6 +154,7 @@ class Game_World(State):
         display.fill("black")
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
+        self.draw_stamina()
 
         self.game.text(display, 100, 50, 150, 50, (str(self.time_mins).zfill(2) + ": " + str(self.time_secs).zfill(2)), "white", "black")
 
