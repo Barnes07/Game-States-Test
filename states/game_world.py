@@ -108,14 +108,14 @@ class Game_World(State):
             self.time_walking = 0 #reset time_walking attribute
             if self.time_climbed > 1: #if one second has elapsed
                 self.time_climbed = 0 #reset the time_climbed attribute
-                if self.stam_filled_width - 10 > 0: 
+                if self.stam_filled_width - 10 >= 0: 
                     self.stam_filled_width -= 10 #only decrease the stamina if it will remain greater than 0
         else:
             self.time_walking += delta_time #increment time_walking attribute by time since last frame
             self.time_climbed = 0 #reset time_climbed attribute
             if self.time_walking > 1: #if a second has elapsed
                 self.time_walking = 0 #reset time_walking attribute
-                if self.stam_filled_width+ 10 < 100: 
+                if self.stam_filled_width+ 10 <= 100: 
                     self.stam_filled_width += 10 #only increase the stamina if it will remain less than 100
 
 

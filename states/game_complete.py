@@ -23,7 +23,7 @@ class Game_Complete(State):
 
         self.game.number_of_levels_completed = 0
 
-        self.calculate_final_score()
+        self.final_score = str(self.calculate_final_score())
 
     def check_clicks(self, actions):
         if actions["click"]: #if mouse has been clicked 
@@ -51,6 +51,7 @@ class Game_Complete(State):
             time_factor = 50
 
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
+        return(score)
 
 
     def update(self, delta_time, actions):
@@ -61,5 +62,7 @@ class Game_Complete(State):
         display.blit(self.background_image, self.background_image_rect)
         self.main_menu_button = self.game.text(self.game.screen, self.main_menu_button_rect.centerx, self.main_menu_button_rect.centery, 215, 100, "Main Menu", "white", "black") #render "Main Menu" text 
         self.game.text(display, (self.game.SCREEN_WIDTH)/2, 200, 300, 100, "Congratulations", "white", "black") #render "Game Over" text 
+        self.game.text(display, (self.game.SCREEN_WIDTH)/2, (self.game.SCREEN_HEIGHT)/2, 300, 100, "Score: " + self.final_score, "white", "black") #render score text 
+
 
         
