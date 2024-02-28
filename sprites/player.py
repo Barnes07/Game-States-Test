@@ -74,12 +74,18 @@ class Player(pygame.sprite.Sprite):
         self.current_array = self.up_sprites
     
     def check_wall_collision(self, delta_time):
-        for sprite in self.group.sprites():
-            check = isinstance(sprite, Wall)      #"isinstance" is a function that returns a boolean value depending on whether the firsts parameter is of the class type mentioned in the second parameter
+        for sprite in self.group.sprites(): #iterate through all sprites 
+            check = isinstance(sprite, Wall) #assign boolean value depending on if the sprite is wall or not
             if check == True:
-                if pygame.sprite.collide_rect(self, sprite):
-                    self.rect.center -= self.speed * self.direction * delta_time     # "-=" reverses the previous player's direction of movement and therefore stops the map from scrolling behind the player
-
+                if pygame.sprite.collide_rect(self, sprite): #if the player and a wall is colliding
+                    up_rectangle = self.rect.move(0, self.game.block_size/2) #temporarily move player rectangle up
+                    down_rectangle = self.rect.move(0, -self.game.block_size/2) #temporarily move player rectangle up
+                    if sprite.rect.colliderect(up_rectangle) or sprite.rect.colliderect(down_rectangle):
+                        self.rect.y -= self.speed * self.direction.y * delta_time #reverse player movement in y direction
+                    left_rectangle = self.rect.move(-self.game.block_size/2, 0) #temporarily move player rectangle left
+                    right_rectnagle = self.rect.move(self.game.block_size/2, 0) #temporarily move player rectangle right
+                    if sprite.rect.colliderect(left_rectangle) or sprite.rect.colliderect(right_rectnagle):
+                        self.rect.x -= self.speed * self.direction.x * delta_time #reverse player movement in x direction
 
 
     def update(self, delta_time, actions):
