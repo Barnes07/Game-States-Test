@@ -11,8 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.game = game 
         self.game_world = game_world
         self.sprite_dir = os.path.join(self.game.sprite_dir, "player")
-        self.x = 500
-        self.y = 500
+        self.x = 2000
+        self.y = 2000
         self.image_holder = pygame.image.load(os.path.join(self.sprite_dir, "player_down1.png")) #A placeholder of the player image so that a rectangle can be created. 
         self.rect = self.image_holder.get_rect(center = (self.x, self.y))
         self.group = group
@@ -27,6 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.previous_position = pygame.math.Vector2()
 
         self.artifacts_collected = 0
+        self.flute_picked_up = False
 
 
     
@@ -84,31 +85,10 @@ class Player(pygame.sprite.Sprite):
                     if sprite.rect.collidepoint(self.rect.centerx + self.game.block_size, self.rect.centery) or sprite.rect.collidepoint(self.rect.centerx - self.game.block_size, self.rect.centery):
                         #if the player is colliding with wall in the x plane
                         self.rect.x -= self.speed * self.direction.x * delta_time #reverse player movement in x direction
+    
 
 
-    def update(self, delta_time, actions):
-        velocity_x = self.rect.centerx - self.previous_position.x
-        velocity_y = self.rect.centery - self.previous_position.y
-        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
-
-        #Get direction
-        self.direction.x = actions["right"] - actions["left"]
-        self.direction.y = actions["down"] - actions["up"]
-        if self.direction.magnitude() != 0:
-            self.direction.normalize()
-        #Update location
-        self.x += self.speed * delta_time * self.direction.x
-        self.y += self.speed  * delta_time * self.direction.y
-        self.rect.centerx += self.speed * delta_time * self.direction.x 
-        self.rect.centery += self.speed * delta_time * self.direction.y
-        self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
-        #Animate the player
-        self.animate(delta_time, self.direction.x, self.direction.y)
-
-        self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
-
-
-
+    
     def find_start_coordinates(self, map):
         found = False
         #iterate through all blocks in the map grid
@@ -138,6 +118,32 @@ class Player(pygame.sprite.Sprite):
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))
+
+
+    def update(self, delta_time, actions):
+        velocity_x = self.rect.centerx - self.previous_position.x
+        velocity_y = self.rect.centery - self.previous_position.y
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
+
+        #Get direction
+        self.direction.x = actions["right"] - actions["left"]
+        self.direction.y = actions["down"] - actions["up"]
+        if self.direction.magnitude() != 0:
+            self.direction.normalize()
+        #Update location
+        self.x += self.speed * delta_time * self.direction.x
+        self.y += self.speed  * delta_time * self.direction.y
+        self.rect.centerx += self.speed * delta_time * self.direction.x 
+        self.rect.centery += self.speed * delta_time * self.direction.y
+        self.actual_pos = (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+        #Animate the player
+        self.animate(delta_time, self.direction.x, self.direction.y)
+
+        self.previous_position = pygame.math.Vector2(self.rect.centerx, self.rect.centery) #need to update the previous position at the end of the update method
+
+
+
+
     
 
        

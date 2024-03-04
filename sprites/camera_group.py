@@ -1,6 +1,7 @@
 import pygame 
 
 from sprites.artifact import Artifact
+from sprites.flute import Flute
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self,game):
@@ -17,8 +18,9 @@ class CameraGroup(pygame.sprite.Group):
         
     def update(self, delta_time, actions):
         for sprite in self.sprites():
-            check = isinstance(sprite, Artifact)
-            if check == True:
+            if isinstance(sprite, Artifact): #only calls update method for artifact 
+                sprite.update()
+            if isinstance(sprite, Flute): #only calls update method for flute
                 sprite.update()
 
 

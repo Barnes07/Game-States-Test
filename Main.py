@@ -4,7 +4,6 @@ import time
 
 from states.main_menu import Main_Menu
 
-
 class Game():
     def __init__(self):
         pygame.init()
@@ -25,7 +24,7 @@ class Game():
 
         #settings
         self.number_of_artifacts = 10
-        self.number_of_total_levels = 5
+        self.number_of_total_levels = 2
         self.number_of_levels_completed = 0
 
 

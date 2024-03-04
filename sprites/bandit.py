@@ -9,26 +9,32 @@ class Bandit(Enemy):
     def __init__ (self, game, group, actual_map_width, actual_map_height, game_world):
         super().__init__(game, group)
         self.game_world = game_world
-        self.x = 2000
-        self.y = 2000
+        self.x = 2100
+        self.y = 2282
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 200
 
+        #pathfinding
         self.detection_radius = 2000 
         self.chase_radius = 250
-        self.waypoints = []
-        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+        
 
-
+        #map dimensions
         self.actual_map_width = actual_map_width
         self.actual_map_height = actual_map_height
 
+        #waypoints
         self.time_since_last_move = 0
         self.time_to_move_to_waypoint = 1
         self.current_waypoint = 0
+        self.waypoints = []
+        self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
 
-        self.previous_position = pygame.math.Vector2()       
+        self.previous_position = pygame.math.Vector2()    
+
+        #Flute
+        self.charmed = False   
 
     def check_detection(self, player):
         check = False
@@ -178,25 +184,44 @@ class Bandit(Enemy):
     def check_player_collision(self, player):
         if pygame.sprite.collide_rect(self, player):
             return(True)
+        
+    
+    def check_flute_valid(self):
+        if self.game_world.player.flute_picked_up:
+            return(True)
+        else:
+            return(False)
+    
+    def check_play_flute(self, actions):
+        if actions["flute"]:
+            if self.check_flute_valid:
+                distance_to_player = self.get_distance_to_player(self.game_world.player)
+                if distance_to_player < 300:
+                    self.charmed = True
+                    print("Enemy charmed at a distnace of", distance_to_player)
+                    self.game_world.player.flute_picked_up = False
 
 
         
-    def update(self, delta_time):
+    def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y
         self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velocity at start of update method
 
-        if self.check_chase(self.game_world.player):
-            self.pursue(self.game_world.player)
-            self.waypoints = [] #reset self.waypoints
-            self.current_waypoint = 0 #reset self.current_waypoint
-            self.rect.centerx += self.velocity.x * delta_time
-            self.rect.centery += self.velocity.y * delta_time
+        self.check_play_flute(actions)
 
-        else:
-            if not self.waypoints:
-                self.create_path()
-            self.follow_waypoints(delta_time)
+        if self.charmed == False:
+            if self.check_chase(self.game_world.player):
+                self.pursue(self.game_world.player)
+                self.waypoints = [] #reset self.waypoints
+                self.current_waypoint = 0 #reset self.current_waypoint
+                self.rect.centerx += self.velocity.x * delta_time
+                self.rect.centery += self.velocity.y * delta_time
+
+            else:
+                if not self.waypoints:
+                    self.create_path()
+                self.follow_waypoints(delta_time)
 
         
 

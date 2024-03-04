@@ -9,6 +9,7 @@ from sprites.player import Player
 from sprites.bandit import Bandit
 from sprites.artifact import Artifact
 from sprites.exit_door import Exit_Door
+from sprites.flute import Flute
 from sprites.camera_group import CameraGroup
 from map_generation.cellular_automata import Cellular_Automata
 
@@ -34,11 +35,14 @@ class Game_World(State):
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
+
+
         
         #finding start coordinates
         self.player.find_start_coordinates(self.map.final_map)
         self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
+
 
         #loot bag
         self.filled_height = 0
@@ -57,6 +61,17 @@ class Game_World(State):
         self.time_since_last_frame = 0
         self.time_mins = time_mins
         self.time_secs = time_secs
+
+        #Flute
+        if self.check_flute_spawn():
+            self.flute = Flute(self.game, self, self.camera_group)
+            self.flute.find_start_coordiantes(self.map.final_map)
+        else:
+            print("flute not generated")
+        self.flute_image = pygame.image.load(os.path.join(self.game.sprite_dir, "flute", "flute.png"))
+        self.flute_image = pygame.transform.scale_by(self.flute_image, 0.7)
+        self.flute_rect = self.flute_image.get_rect(center = (self.game.SCREEN_WIDTH - 125, 25))
+
 
 
     def instantiate_artifacts(self):
@@ -85,6 +100,13 @@ class Game_World(State):
                 new_state = Flute_Playing(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
                 self.game.number_of_levels_completed += 1
+    
+    def check_flute_spawn(self):
+        random_num = random.randint(1,2)
+        if random_num == 1:
+            return(True)
+        else:
+            return(False)
 
                     
     def calculate_time(self, delta_time):
@@ -117,6 +139,13 @@ class Game_World(State):
                 self.time_walking = 0 #reset time_walking attribute
                 if self.stam_filled_width+ 10 <= 100: 
                     self.stam_filled_width += 10 #only increase the stamina if it will remain less than 100
+    
+    def display_flute(self, display):
+        if self.player.flute_picked_up:
+            display.blit(self.flute_image, self.flute_rect)
+
+
+
 
 
    
@@ -125,7 +154,7 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
-        self.bandit.update(delta_time)
+        self.bandit.update(delta_time, actions)
 
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
         self.check_open_door(actions)
@@ -158,6 +187,7 @@ class Game_World(State):
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
         self.draw_stamina()
+        self.display_flute(display)
 
         self.game.text(display, 100, 50, 150, 50, (str(self.time_mins).zfill(2) + ": " + str(self.time_secs).zfill(2)), "white", "black")
 
