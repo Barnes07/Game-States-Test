@@ -2,6 +2,7 @@ import pygame
 import os
 from states.state import State
 import csv
+from datetime import date
 
 class Game_Complete(State):
     def __init__(self, game, time_secs, time_mins):
@@ -26,7 +27,7 @@ class Game_Complete(State):
 
         self.final_score = str(self.calculate_final_score())
 
-        self.update_csv("BG", "3000", 4)
+        self.update_csv("BG", "4000")
 
 
     def check_clicks(self, actions):
@@ -57,22 +58,27 @@ class Game_Complete(State):
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
         return(score)
 
-    def update_csv(self, name, score, line): #"https://stackoverflow.com/questions/37173892/convert-from-csv-to-array-in-python" 
+    def update_csv(self, name, score): #"https://stackoverflow.com/questions/37173892/convert-from-csv-to-array-in-python" 
         scores = []
+        current_date = ""
         with open(self.game.leaderboard) as csv_file:
             csv_reader = csv.reader(csv_file)
             for row in csv_reader:
                 scores.append(row)
         
         if len(scores) < 5:
-            scores.append([name, score])
+            current_date = str(date.today())
+            scores.append([name, current_date, score])
         else:
             lowest_score_index = -1
+            lowest_score = float("inf")
             for count in range (0, len(scores)):
-                if int(score) >= int(scores[count][1]):
+                if int(score) >= int(scores[count][2]) and int(scores[count][2]) <= lowest_score:
                     lowest_score_index = count
-                if lowest_score_index > 0:
-                    scores[lowest_score_index] = (name, score)
+                    lowest_score = int(scores[count][2])
+            if lowest_score_index > -1:
+                current_date = str(date.today())
+                scores[lowest_score_index] = (name, current_date, score)
         
         with open(self.game.leaderboard, "w", newline="") as csv_file:
             csv_writer = csv.writer(csv_file)
