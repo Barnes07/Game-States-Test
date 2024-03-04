@@ -1,6 +1,7 @@
 import pygame
 import os
 from states.state import State
+import csv
 
 class Game_Complete(State):
     def __init__(self, game, time_secs, time_mins):
@@ -24,6 +25,9 @@ class Game_Complete(State):
         self.game.number_of_levels_completed = 0
 
         self.final_score = str(self.calculate_final_score())
+
+        self.update_csv("BG", "3000", 4)
+
 
     def check_clicks(self, actions):
         if actions["click"]: #if mouse has been clicked 
@@ -53,7 +57,29 @@ class Game_Complete(State):
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
         return(score)
 
+    def update_csv(self, name, score, line): #"https://stackoverflow.com/questions/37173892/convert-from-csv-to-array-in-python" 
+        scores = []
+        with open(self.game.leaderboard) as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for row in csv_reader:
+                scores.append(row)
+        
+        if len(scores) < 5:
+            scores.append([name, score])
+        else:
+            lowest_score_index = -1
+            for count in range (0, len(scores)):
+                if int(score) >= int(scores[count][1]):
+                    lowest_score_index = count
+                if lowest_score_index > 0:
+                    scores[lowest_score_index] = (name, score)
+        
+        with open(self.game.leaderboard, "w", newline="") as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerows(scores)
+        
 
+        
     def update(self, delta_time, actions):
         self.check_clicks(actions)
         self.transition_state()

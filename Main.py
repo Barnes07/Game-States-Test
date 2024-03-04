@@ -24,7 +24,7 @@ class Game():
 
         #settings
         self.number_of_artifacts = 10
-        self.number_of_total_levels = 2
+        self.number_of_total_levels = 1
         self.number_of_levels_completed = 0
 
 
@@ -112,6 +112,7 @@ class Game():
         self.sprite_dir = os.path.join(self.assets_dir, "sprites")
         self.font_dir = os.path.join(self.assets_dir, "fonts")
         self.font = pygame.font.Font(os.path.join(self.font_dir, "Pixeltype.ttf"), 50)
+        self.leaderboard = os.path.join("leaderboard/leaderboard.csv")
 
     def load_states(self):
         self.main_menu_screen = Main_Menu(self)

@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import csv
 from states.state import State
 from states.pause_menu import PauseMenu
 from states.game_over import Game_Over
@@ -146,9 +147,6 @@ class Game_World(State):
 
 
 
-
-
-   
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
