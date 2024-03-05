@@ -27,7 +27,7 @@ class Game_Complete(State):
 
         self.final_score = str(self.calculate_final_score())
 
-        self.update_csv("BG", "4000")
+        self.update_csv("BG", self.final_score)
 
 
     def check_clicks(self, actions):
@@ -58,7 +58,7 @@ class Game_Complete(State):
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
         return(score)
 
-    def update_csv(self, name, score): #"https://stackoverflow.com/questions/37173892/convert-from-csv-to-array-in-python" 
+    def update_csv(self, name, score):  
         scores = []
         current_date = ""
         with open(self.game.leaderboard) as csv_file:
@@ -83,7 +83,8 @@ class Game_Complete(State):
         with open(self.game.leaderboard, "w", newline="") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(scores)
-        
+    
+
 
         
     def update(self, delta_time, actions):
