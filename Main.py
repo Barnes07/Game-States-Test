@@ -14,7 +14,7 @@ class Game():
         self.running = True
         self.playing = True
         self.actions = {"escape": False, "left": False, "right": False, "up": False, "down": False, "click":False, "mouse_pos":(0,0), "start": False,
-                         "flute": False}
+                         "flute": False, "smoke": False}
         self.delta_time = 0
         self.previous_time = 0
         self.states_stack = [] 
@@ -61,6 +61,8 @@ class Game():
                     self.actions["start"] = True
                 if event.key == pygame.K_f:
                     self.actions["flute"] = True
+                if event.key == pygame.K_b:
+                    self.actions["smoke"] = True
                 
             if event.type == pygame.KEYUP:
                 #Setting all actions to False when released
@@ -78,6 +80,8 @@ class Game():
                     self.actions["start"] = False 
                 if event.key == pygame.K_f:
                     self.actions["flute"] = False
+                if event.key == pygame.K_b:
+                    self.actions["smoke"] = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 #Setting value of mouse click
                 self.actions["click"] = True

@@ -171,7 +171,7 @@ class Game_World(State):
         self.player.update(delta_time, actions)
         self.bandit.update(delta_time, actions)
 
-        self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates
+        self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates.
         self.check_open_door(actions)
         self.camera_group.update(delta_time, actions)
 
@@ -181,7 +181,7 @@ class Game_World(State):
 
         self.update_stamina(actions, delta_time)
         self.check_valid_climb(actions, delta_time)
-        
+
     def render(self, display):
         display.fill("black")
         self.camera_group.render(display, self.player)

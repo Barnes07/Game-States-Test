@@ -151,7 +151,3 @@ class Player(pygame.sprite.Sprite):
 
 
         
-
-    def render(self, display):
-        display.blit(self.current_image, (self.x, self.y))
-        
