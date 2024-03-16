@@ -2,6 +2,7 @@ import pygame
 
 from sprites.artifact import Artifact
 from sprites.flute import Flute
+from sprites.smoke_bomb import Smoke_Bomb
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self,game):
@@ -22,6 +23,7 @@ class CameraGroup(pygame.sprite.Group):
                 sprite.update()
             if isinstance(sprite, Flute): #only calls update method for flute
                 sprite.update()
+
 
 
     def render(self, display, player):

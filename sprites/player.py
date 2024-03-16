@@ -28,6 +28,7 @@ class Player(pygame.sprite.Sprite):
 
         self.artifacts_collected = 0
         self.flute_picked_up = False
+        self.smoke_bomb_picked_up = False
 
 
     

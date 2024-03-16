@@ -13,6 +13,7 @@ class Artifact(pygame.sprite.Sprite):
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
 
     def find_start_coordiantes(self, map):
+        #Find a pair of random valid coordinates.
         found = False
         while found == False:
             random_x = random.randint(1, self.game_world.actual_map_width - 1)

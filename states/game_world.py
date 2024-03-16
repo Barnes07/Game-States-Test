@@ -11,6 +11,7 @@ from sprites.bandit import Bandit
 from sprites.artifact import Artifact
 from sprites.exit_door import Exit_Door
 from sprites.flute import Flute
+from sprites.smoke_bomb import Smoke_Bomb
 from sprites.camera_group import CameraGroup
 from map_generation.cellular_automata import Cellular_Automata
 
@@ -33,6 +34,12 @@ class Game_World(State):
 
         #object instantiations 
         self.instantiate_artifacts()
+
+        self.instantiate_smoke_bomb()
+        self.smoke_bomb_image = pygame.image.load(os.path.join(self.game.sprite_dir, "smoke_bomb", "smoke_bomb.png"))
+        self.smoke_bomb_image = pygame.transform.scale_by(self.smoke_bomb_image, 0.7)
+        self.smoke_bomb_rect = self.smoke_bomb_image.get_rect(center = (self.game.SCREEN_WIDTH - 200, 25))
+
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
@@ -79,6 +86,12 @@ class Game_World(State):
         for artifact in range (0,self.game.number_of_artifacts):
             artifact = Artifact(self.game, self, self.camera_group)
             artifact.find_start_coordiantes(self.map.final_map)
+    
+    def instantiate_smoke_bomb(self):
+        smoke_bomb = Smoke_Bomb(self.game, self, self.camera_group)
+        smoke_bomb.find_start_coordiantes(self.map.final_map)
+
+
 
     def draw_loot_bag(self):
         self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect) #background, grey part of loot bag
@@ -145,6 +158,10 @@ class Game_World(State):
         if self.player.flute_picked_up:
             display.blit(self.flute_image, self.flute_rect)
 
+    def display_smoke_bomb(self,display):
+        if self.player.smoke_bomb_picked_up:
+            display.blit(self.smoke_bomb_image, self.smoke_bomb_rect)
+
 
 
     def update(self, delta_time, actions):
@@ -164,28 +181,14 @@ class Game_World(State):
 
         self.update_stamina(actions, delta_time)
         self.check_valid_climb(actions, delta_time)
-
-
-                
-
-            
-
         
-
-
-
-
-
-
-
-
-  
     def render(self, display):
         display.fill("black")
         self.camera_group.render(display, self.player)
         self.draw_loot_bag()
         self.draw_stamina()
         self.display_flute(display)
+        self.display_smoke_bomb(display)
 
         self.game.text(display, 100, 50, 150, 50, (str(self.time_mins).zfill(2) + ": " + str(self.time_secs).zfill(2)), "white", "black")
 

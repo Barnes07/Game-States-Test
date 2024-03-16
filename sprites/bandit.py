@@ -184,8 +184,7 @@ class Bandit(Enemy):
     def check_player_collision(self, player):
         if pygame.sprite.collide_rect(self, player):
             return(True)
-        
-    
+         
     def check_flute_valid(self):
         if self.game_world.player.flute_picked_up:
             return(True)
@@ -200,9 +199,7 @@ class Bandit(Enemy):
                     self.charmed = True
                     print("Enemy charmed at a distnace of", distance_to_player)
                     self.game_world.player.flute_picked_up = False
-
-
-        
+    
     def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y
