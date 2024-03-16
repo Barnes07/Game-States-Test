@@ -14,7 +14,7 @@ class Exit_Door(pygame.sprite.Sprite):
 
             self.collision_rect = pygame.Rect(self.rect.left, self.rect.top, self.rect.width, self.rect.height*0.75)
             self.collision_rect.topleft = self.rect.topleft
-        
+
         def get_random_starting_coordinates(self, map):
             found = False
             #iterate through random cooridinates until a valid position is found
@@ -45,18 +45,21 @@ class Exit_Door(pygame.sprite.Sprite):
             self.collision_rect.topleft = self.rect.topleft #sets coordinates of rectangle for collision detection
         
         def check_collision(self, player, delta_time):
-            if pygame.Rect.colliderect(self.collision_rect, player.rect): #checks for collision between player and collision rectnagles 
-                if self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery + self.game.block_size) or self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery - self.game.block_size):
-                    #if the player is colliding with the door in the vertical direction, reverse the movement made in the y direction
-                    player.rect.y -= player.speed * player.direction.y * delta_time
-                if self.collision_rect.collidepoint(player.rect.centerx + self.game.block_size, player.rect.centery) or self.collision_rect.collidepoint(player.rect.centerx - self.game.block_size, player.rect.centery):
-                    #if the player is colliding with the door in the horizontal direction, reverse the movement made in the x direction
-                    player.rect.x -= player.speed * player.direction.x * delta_time
+            if self.alive(): #only execute if the door has been spawned in 
+                if pygame.Rect.colliderect(self.collision_rect, player.rect): #checks for collision between player and collision rectnagles 
+                    if self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery + self.game.block_size) or self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery - self.game.block_size):
+                        #if the player is colliding with the door in the vertical direction, reverse the movement made in the y direction
+                        player.rect.y -= player.speed * player.direction.y * delta_time
+                    if self.collision_rect.collidepoint(player.rect.centerx + self.game.block_size, player.rect.centery) or self.collision_rect.collidepoint(player.rect.centerx - self.game.block_size, player.rect.centery):
+                        #if the player is colliding with the door in the horizontal direction, reverse the movement made in the x direction
+                        player.rect.x -= player.speed * player.direction.x * delta_time
 
         def check_door_proximity(self, player):
-            if self.collision_rect.left <= player.rect.centerx <= self.collision_rect.right:
-                if self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery - self.game.block_size): #negative since (0,0) is top left
-                    return(True)
+            if self.alive(): #only execute if door has been spawned in
+                if self.collision_rect.left <= player.rect.centerx <= self.collision_rect.right:
+                    if self.collision_rect.collidepoint(player.rect.centerx, player.rect.centery - self.game.block_size): #negative since (0,0) is top left
+                        return(True)
+
 
 
                     

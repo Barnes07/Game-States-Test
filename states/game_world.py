@@ -35,13 +35,14 @@ class Game_World(State):
         #object instantiations 
         self.instantiate_artifacts()
 
-        self.instantiate_smoke_bomb()
+        #self.instantiate_smoke_bomb()
         self.smoke_bomb_image = pygame.image.load(os.path.join(self.game.sprite_dir, "smoke_bomb", "smoke_bomb.png"))
         self.smoke_bomb_image = pygame.transform.scale_by(self.smoke_bomb_image, 0.7)
         self.smoke_bomb_rect = self.smoke_bomb_image.get_rect(center = (self.game.SCREEN_WIDTH - 200, 25))
 
         self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
+        self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
 
 
@@ -74,8 +75,6 @@ class Game_World(State):
         if self.check_flute_spawn():
             self.flute = Flute(self.game, self, self.camera_group)
             self.flute.find_start_coordiantes(self.map.final_map)
-        else:
-            print("flute not generated")
         self.flute_image = pygame.image.load(os.path.join(self.game.sprite_dir, "flute", "flute.png"))
         self.flute_image = pygame.transform.scale_by(self.flute_image, 0.7)
         self.flute_rect = self.flute_image.get_rect(center = (self.game.SCREEN_WIDTH - 125, 25))
@@ -114,6 +113,15 @@ class Game_World(State):
                 new_state = Flute_Playing(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
                 self.game.number_of_levels_completed += 1
+    
+    def instantiate_door(self):
+        if self.filled_height == self.fill_per_artifact * self.game.number_of_artifacts: #if the loot bag is full
+            self.player.kill()
+            self.exit_door.add(self.camera_group)
+            self.player.add(self.camera_group)
+
+
+
     
     def check_flute_spawn(self):
         random_num = random.randint(1,2)
@@ -181,6 +189,8 @@ class Game_World(State):
 
         self.update_stamina(actions, delta_time)
         self.check_valid_climb(actions, delta_time)
+
+        self.instantiate_door()
 
     def render(self, display):
         display.fill("black")
