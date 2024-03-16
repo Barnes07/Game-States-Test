@@ -34,6 +34,7 @@ class Game_Complete(State):
         self.username = ""
         self.final_username = ""
         self.username_saved = False
+        self.score_saved = False
         self.save_button_colour = "red"
         self.time_since_last_key = 0
 
@@ -69,8 +70,8 @@ class Game_Complete(State):
         else:
             time_factor = 50
 
-        score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor) - (self.time_secs + self.time_mins * 60)
-        return(score)
+        score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor)*100 - (self.time_secs + self.time_mins * 60)
+        return(4500)
 
     def update_csv(self, name, score):  
         scores = []
@@ -171,9 +172,12 @@ class Game_Complete(State):
 
         self.get_username(delta_time)
 
+        
         if self.username_saved == True:
-            self.update_csv(self.final_username, self.final_score)
-            self.username_saved = False
+            if self.score_saved == False:
+                self.update_csv(self.final_username, self.final_score)
+                self.username_saved = False
+                self.score_saved = True
 
     def render(self, display):
         display.blit(self.background_image, self.background_image_rect)

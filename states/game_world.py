@@ -40,7 +40,7 @@ class Game_World(State):
         self.smoke_bomb_image = pygame.transform.scale_by(self.smoke_bomb_image, 0.7)
         self.smoke_bomb_rect = self.smoke_bomb_image.get_rect(center = (self.game.SCREEN_WIDTH - 200, 25))
 
-        self.bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+        self.instantiate_badits()
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
         self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
@@ -49,7 +49,6 @@ class Game_World(State):
         
         #finding start coordinates
         self.player.find_start_coordinates(self.map.final_map)
-        self.bandit.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
 
 
@@ -89,6 +88,12 @@ class Game_World(State):
     def instantiate_smoke_bomb(self):
         smoke_bomb = Smoke_Bomb(self.game, self, self.camera_group)
         smoke_bomb.find_start_coordiantes(self.map.final_map)
+    
+    def instantiate_badits(self):
+        for bandit in range(0, self.game.number_of_bandits):
+            bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
+            bandit.find_start_coordinates(self.map.final_map)
+
 
 
 
@@ -103,9 +108,11 @@ class Game_World(State):
         self.filled_stamina_bar = pygame.draw.rect(self.game.screen, "green", self.filled_stamina_rect) #draws updated "filled" rectangle 
 
     def check_game_over(self):
-        if self.bandit.check_player_collision(self.player):
-            new_state = Game_Over(self.game)
-            new_state.enter_state()
+        for sprite in self.camera_group.sprites():
+            if isinstance(sprite, Bandit):
+                if sprite.check_player_collision(self.player):
+                    new_state = Game_Over(self.game)
+                    new_state.enter_state()
 
     def check_open_door(self, actions):
         if self.exit_door.check_door_proximity(self.player):
@@ -113,12 +120,14 @@ class Game_World(State):
                 new_state = Flute_Playing(self.game, self.time_secs, self.time_mins)
                 new_state.enter_state()
                 self.game.number_of_levels_completed += 1
+                self.game.number_of_bandits += 1
     
     def instantiate_door(self):
         if self.filled_height == self.fill_per_artifact * self.game.number_of_artifacts: #if the loot bag is full
             self.player.kill()
             self.exit_door.add(self.camera_group)
             self.player.add(self.camera_group)
+
 
 
 
@@ -177,7 +186,6 @@ class Game_World(State):
             new_state = PauseMenu(self.game)
             new_state.enter_state()
         self.player.update(delta_time, actions)
-        self.bandit.update(delta_time, actions)
 
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates.
         self.check_open_door(actions)

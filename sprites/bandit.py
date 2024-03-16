@@ -1,6 +1,7 @@
 import pygame 
 import os
 import math
+import random
 from sprites.enemy import Enemy
 import heapq
 from AStar.node import Node
@@ -127,33 +128,19 @@ class Bandit(Enemy):
                 self.time_since_last_move = 0
     
     def find_start_coordinates(self, map):
+        #Find a pair of random valid coordinates.
         found = False
-        #iterate through all blocks in the map grid
-        for a in range (self.game_world.actual_map_width, 0, -1):
-            for b in range(self.game_world.actual_map_height, 0, -1):
-                wall_count = 0
-                #iterate through neighbouring 8 blocks
-                for x in range (a-1, a+2):
-                    for y in range(b-1, b+2):
-                        #check if the block is within map bounds
-                        if 0 <= x < self.game_world.actual_map_width and 0 <= y < self.game_world.actual_map_height:
-                            #check if block is a wall
-                            if map[x][y] == 0:
-                                wall_count = wall_count + 1
-                        else:
-                            wall_count = wall_count + 1
-                if wall_count == 0:
-                    #set bandit starting coordinates to those stored in a and b
-                    a = a * self.game.block_size
-                    b = b * self.game.block_size
-                    if found == False:
-                        self.set_coordinates(a, b)
-                        found = True
+        while found == False:
+            random_x = random.randint(1, self.game_world.actual_map_width - 1)
+            random_y = random.randint(1, self.game_world.actual_map_height - 1)
+            if map[random_x][random_y] == 1:
+                found = True
+                self.set_coordinates(random_x, random_y)
 
 
                     
     def set_coordinates(self, x, y):
-        self.rect = self.current_image.get_rect(center = (x, y))
+        self.rect = self.current_image.get_rect(center = (x * self.game.block_size, y * self.game.block_size))
 
     def get_distance_to_player(self, player): #method to calculate distance between player and enemy
         enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery) 

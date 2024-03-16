@@ -17,6 +17,10 @@ class LeaderboardMenu(State):
 
         #scores
         self.scores_array = self.get_scores()
+        self.scores_array = self.bubble_sort(self.scores_array)
+        self.scores_array.reverse()
+        
+        
 
         self.click_sound = pygame.mixer.Sound(os.path.join(self.game.assets_dir, "audio", "mouse_click_sound.wav"))
 
@@ -41,6 +45,16 @@ class LeaderboardMenu(State):
             for row in csv_reader:
                 scores.append(row)
         return(scores)
+    
+    def bubble_sort(self, array):
+        for count in range(0,len(array)):
+            for a in range(0, len(array) - 1):
+                if int(array[a][2]) > int(array[a + 1][2]):
+                    temp = array[a+1]
+                    array[a+  1] = array[a]
+                    array[a] = temp
+        return(array)
+
 
     
     
