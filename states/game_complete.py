@@ -71,7 +71,7 @@ class Game_Complete(State):
             time_factor = 50
 
         score = (self.game.number_of_artifacts * self.game.number_of_total_levels * time_factor)*100 - (self.time_secs + self.time_mins * 60)
-        return(4500)
+        return(score)
 
     def update_csv(self, name, score):  
         scores = []

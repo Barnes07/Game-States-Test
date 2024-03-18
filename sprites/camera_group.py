@@ -15,6 +15,7 @@ class CameraGroup(pygame.sprite.Group):
         self.HalfHeight = self.game.SCREEN_HEIGHT//2
 
     def centre_player(self, player):
+        #place player in centre of screen
         self.CameraOffset.x = player.rect.centerx - self.HalfWidth
         self.CameraOffset.y = player.rect.centery - self.HalfHeight
         
@@ -24,16 +25,16 @@ class CameraGroup(pygame.sprite.Group):
                 sprite.update()
             if isinstance(sprite, Flute): #only calls update method for flute
                 sprite.update()
-            if isinstance(sprite, Bandit):
+            if isinstance(sprite, Bandit): #only calls update method for bandit
                 sprite.update(delta_time, actions)
 
 
 
 
     def render(self, display, player):
-        #old AlteredDraw function
         self.centre_player(player)
         for sprite in self.sprites():
+            #update coordinate of all sprites to move in the opposite direction of the player to create the illusion of movement
             OffsetPosition = sprite.rect.topleft - self.CameraOffset
             display.blit(sprite.current_image, OffsetPosition)
     

@@ -41,6 +41,7 @@ class Bandit(Enemy):
         check = False
         distance_to_player = self.get_distance_to_player(player)
         if distance_to_player <= self.detection_radius:
+            #if the player is within the detection radius
             check = True
         return(check)
 
@@ -56,22 +57,23 @@ class Bandit(Enemy):
             directions = [(0,1), (0,-1), (1,0), (-1,0)]
             open_set = []
             closed_set = set()
-            g_scores = {}
-            f_scores = {}
+            g_scores = {} #distance to a given node from the start 
+            f_scores = {} #estimated distance to the end node
 
-            positions_added_to_open_set = set()
+            positions_added_to_open_set = set() #coordinates of nodes that have been added to the open set
 
-            start_node = Node(None, (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size))
+            start_node = Node(None, (self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)) #instantiate start node
             start_pos = (start_node.position)
-            g_scores[start_pos] = 0
-            f_scores[start_pos] = 0 + self.heuristic(start_pos, end)
+            g_scores[start_pos] = 0 
+            f_scores[start_pos] = 0 + self.heuristic(start_pos, end) 
 
-            heapq.heappush(open_set, (0, start_node))
+            heapq.heappush(open_set, (0, start_node)) #add start node to the priority queue
 
             while len(open_set) > 0: #while there are still nodes to be visited
                 (current_f_score, current_node) = heapq.heappop(open_set) #was origionally setting current_g_score not current_f_score 
             
                 if current_node.position == end:
+                    #if a path to the end node has been found
                     path = []
                     while current_node != None:
                         path.append(current_node.position)
@@ -110,47 +112,53 @@ class Bandit(Enemy):
         check = False
         distance_to_player = self.get_distance_to_player(player)
         if distance_to_player <= self.chase_radius:
+            #if player is within the chase radius of the bandit
             check = True
         return(check)
 
     def follow_waypoints(self, delta_time):
-        self.time_since_last_move += delta_time
+        self.time_since_last_move += delta_time #increments the time since the last move by the time elapsed since the last frame's execution 
         if self.time_since_last_move > self.time_to_move_to_waypoint and self.waypoints:
+            #if sufficient time has elapsed and there are still waypoints to follow:
             if self.current_waypoint < len(self.waypoints) - 1:
+                #if there is a waypoint to follow
                 self.time_since_last_move = 0  
                 self.current_waypoint += 1
-                self.rect.centerx = self.waypoints[self.current_waypoint][0] * self.game.block_size
-                self.rect.centery = self.waypoints[self.current_waypoint][1] * self.game.block_size
-                self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
+                self.rect.centerx = self.waypoints[self.current_waypoint][0] * self.game.block_size #update x position to be eqaul to that specified by the waypoint
+                self.rect.centery = self.waypoints[self.current_waypoint][1] * self.game.block_size #update y position to be eqaul to that specified by the waypoint
+                self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size) #update actual position attribute
             else:
+                #clear waypoints as the destination has been reached
                 self.waypoints = []
-                self.current_waypoint = 0
+                self.current_waypoint = 0 #rest pointer
                 self.time_since_last_move = 0
     
     def find_start_coordinates(self, map):
         #Find a pair of random valid coordinates.
         found = False
         while found == False:
+            #while valid starting coordinates have not been found, create new random coordinates
             random_x = random.randint(1, self.game_world.actual_map_width - 1)
             random_y = random.randint(1, self.game_world.actual_map_height - 1)
             if map[random_x][random_y] == 1:
+                #return the coordinates if they are a floor (valid)
                 found = True
                 self.set_coordinates(random_x, random_y)
-
-
-                    
+                 
     def set_coordinates(self, x, y):
+        #update the rectangles x and y coordinates according to the x and y parameters
         self.rect = self.current_image.get_rect(center = (x * self.game.block_size, y * self.game.block_size))
+        #x and y are multiplied by "block_size" so that the cooridnates are in terms of pixels
 
     def get_distance_to_player(self, player): #method to calculate distance between player and enemy
         enemy_vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery) 
         player_vector = pygame.math.Vector2(player.rect.centerx, player.rect.centery)
-        distance_to_player = player_vector.distance_to(enemy_vector)
+        distance_to_player = player_vector.distance_to(enemy_vector) #finds distnace between two position vectors
         return(distance_to_player)
     
     def predict_player_future_position(self, player): #method to estimate the player's coordinates during the next frame
-        future_position_x = player.rect.centerx + player.velocity.x * self.game.delta_time
-        future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time #these lines calculate the estimated future coordinates of player
+        future_position_x = player.rect.centerx + player.velocity.x * self.game.delta_time #future player x coordinate if it continues moving in the same direction nect frame
+        future_position_y = player.rect.centery + player.velocity.y * self.game.delta_time #future player x coordinate if it continues moving in the same direction nect frame
         return((future_position_x, future_position_y))
 
     def pursue(self, player): 
@@ -174,28 +182,33 @@ class Bandit(Enemy):
          
     def check_flute_valid(self):
         if self.game_world.player.flute_picked_up:
+            #if the player has collected the flute
             return(True)
         else:
             return(False)
     
     def check_play_flute(self, actions):
         if actions["flute"]:
+            #if the "f" key has been pressed
             if self.check_flute_valid:
                 distance_to_player = self.get_distance_to_player(self.game_world.player)
                 if distance_to_player < 300:
+                    #if the player is within a radius of 300 pixels
                     self.charmed = True
-                    print("Enemy charmed at a distnace of", distance_to_player)
                     self.game_world.player.flute_picked_up = False
     
     def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y
-        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velocity at start of update method
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) 
+        #velocity will always need to be calculated at the start of the update method as it needs to be accurate for the current frame
 
         self.check_play_flute(actions)
 
         if self.charmed == False:
+            #if the bandit is not charmed, chase the player
             if self.check_chase(self.game_world.player):
+                #if within chase distance
                 self.pursue(self.game_world.player)
                 self.waypoints = [] #reset self.waypoints
                 self.current_waypoint = 0 #reset self.current_waypoint
@@ -203,6 +216,7 @@ class Bandit(Enemy):
                 self.rect.centery += self.velocity.y * delta_time
 
             else:
+                #if greater than chase distance
                 if not self.waypoints:
                     self.create_path()
                 self.follow_waypoints(delta_time)

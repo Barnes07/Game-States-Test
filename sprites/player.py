@@ -30,8 +30,6 @@ class Player(pygame.sprite.Sprite):
         self.flute_picked_up = False
         self.smoke_bomb_picked_up = False
 
-
-    
     def animate(self, delta_time, x_direction, y_direction):
         #Calculate elapsed time since last frame 
         self.time_since_last_frame += delta_time
@@ -86,10 +84,7 @@ class Player(pygame.sprite.Sprite):
                     if sprite.rect.collidepoint(self.rect.centerx + self.game.block_size, self.rect.centery) or sprite.rect.collidepoint(self.rect.centerx - self.game.block_size, self.rect.centery):
                         #if the player is colliding with wall in the x plane
                         self.rect.x -= self.speed * self.direction.x * delta_time #reverse player movement in x direction
-    
-
-
-    
+     
     def find_start_coordinates(self, map):
         found = False
         #iterate through all blocks in the map grid
@@ -114,17 +109,14 @@ class Player(pygame.sprite.Sprite):
                         self.set_coordinates(a, b)
                         found = True
 
-
-
-
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))
-
 
     def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x
         velocity_y = self.rect.centery - self.previous_position.y
-        self.velocity = pygame.math.Vector2(velocity_x, velocity_y) #need to calculate velovity at start of update method
+        self.velocity = pygame.math.Vector2(velocity_x, velocity_y)
+        #velocity will always need to be calculated at the start of the update method as it needs to be accurate for the current frame
 
         #Get direction
         self.direction.x = actions["right"] - actions["left"]
