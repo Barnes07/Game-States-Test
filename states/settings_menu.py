@@ -74,6 +74,7 @@ class SettingsMenu(State):
         self.game.text(self.game.screen, (125), (self.game.SCREEN_HEIGHT)-75, 215, 100, "Back", "white", "black")
         self.test_text = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2, (self.game.SCREEN_HEIGHT)-700, 210, 100, "Settings Menu", "white", "black")
 
+        self.number_of_artifacts_box = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 300, (self.game.SCREEN_HEIGHT)-500, 200, 100, "Artifacts:", "white", "black")
         self.artifacts_10 = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-500, 100, 100, "10", "white", "black")
         self.artifacts_15 = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2 - 50, (self.game.SCREEN_HEIGHT)-500, 100, 100, "15", "white", "black")
         self.artifacts_20 = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2 + 50, (self.game.SCREEN_HEIGHT)-500, 100, 100, "20", "white", "black")

@@ -3,6 +3,7 @@ import pygame
 from sprites.artifact import Artifact
 from sprites.flute import Flute
 from sprites.bandit import Bandit
+from sprites.smoke import Smoke
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -27,6 +28,8 @@ class CameraGroup(pygame.sprite.Group):
                 sprite.update()
             if isinstance(sprite, Bandit): #only calls update method for bandit
                 sprite.update(delta_time, actions)
+            if isinstance(sprite, Smoke): #only calls update method for smoke
+                sprite.update(delta_time)
 
 
 

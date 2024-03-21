@@ -12,7 +12,7 @@ class Bandit(Enemy):
         self.game_world = game_world
         self.x = 2100
         self.y = 2282
-        self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "player", "player_down1.png")).convert_alpha()
+        self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "bandit", "bandit.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
         self.speed = 200
 
@@ -36,6 +36,7 @@ class Bandit(Enemy):
 
         #Flute
         self.charmed = False   
+        self.smoked = False
 
     def check_detection(self, player):
         check = False
@@ -205,7 +206,7 @@ class Bandit(Enemy):
 
         self.check_play_flute(actions)
 
-        if self.charmed == False:
+        if self.charmed == False and self.smoked == False:
             #if the bandit is not charmed, chase the player
             if self.check_chase(self.game_world.player):
                 #if within chase distance

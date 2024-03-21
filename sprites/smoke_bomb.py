@@ -13,7 +13,9 @@ class Smoke_Bomb(Artifact):
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
 
     
-    #use polymorphism on collect method to prevent loot bag filling up upon collection
+    def check_player_collision(self): #polymorphism of the method in the artifact class
+        if pygame.sprite.collide_rect(self, self.game_world.player): #in_built pygame sprite method to check collision
+            self.get_picked_up()
         
     def get_picked_up(self):
         self.game_world.player.smoke_bomb_picked_up = True

@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.previous_position = pygame.math.Vector2()
 
         self.artifacts_collected = 0
-        self.flute_picked_up = False
+        self.flute_picked_up = True
         self.smoke_bomb_picked_up = False
 
     def animate(self, delta_time, x_direction, y_direction):

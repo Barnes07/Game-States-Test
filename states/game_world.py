@@ -12,6 +12,7 @@ from sprites.artifact import Artifact
 from sprites.exit_door import Exit_Door
 from sprites.flute import Flute
 from sprites.smoke_bomb import Smoke_Bomb
+from sprites.smoke import Smoke
 from sprites.camera_group import CameraGroup
 from map_generation.cellular_automata import Cellular_Automata
 
@@ -35,22 +36,22 @@ class Game_World(State):
         #object instantiations 
         self.instantiate_artifacts()
 
-        #self.instantiate_smoke_bomb()
+        self.instantiate_smoke_bomb()
         self.smoke_bomb_image = pygame.image.load(os.path.join(self.game.sprite_dir, "smoke_bomb", "smoke_bomb.png"))
         self.smoke_bomb_image = pygame.transform.scale_by(self.smoke_bomb_image, 0.7)
         self.smoke_bomb_rect = self.smoke_bomb_image.get_rect(center = (self.game.SCREEN_WIDTH - 200, 25))
+
+        self.smoke = Smoke(self.game, self, self.camera_group)
+        self.smoke.kill()
 
         self.instantiate_badits()
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
         self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
 
-
-        
         #finding start coordinates
         self.player.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
-
 
         #loot bag
         self.filled_height = 0
@@ -94,9 +95,6 @@ class Game_World(State):
             bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
             bandit.find_start_coordinates(self.map.final_map)
 
-
-
-
     def draw_loot_bag(self):
         self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect) #background, grey part of loot bag
         self.filled_loot_bag_rect = pygame.Rect(self.game.SCREEN_WIDTH - 75, self.loot_bag_rect.bottom - self.filled_height, 50, self.filled_height) #updates dimensions of "filled" rectangle
@@ -113,6 +111,8 @@ class Game_World(State):
                 if sprite.check_player_collision(self.player):
                     new_state = Game_Over(self.game)
                     new_state.enter_state()
+                    self.game.number_of_levels_completed = 0
+                    self.number_of_bandits = 1
 
     def check_open_door(self, actions):
         if self.exit_door.check_door_proximity(self.player):
@@ -178,9 +178,24 @@ class Game_World(State):
     def display_smoke_bomb(self,display):
         if self.player.smoke_bomb_picked_up:
             display.blit(self.smoke_bomb_image, self.smoke_bomb_rect)
+    
+    def check_smoke_deploy(self, actions):
+        if self.player.smoke_bomb_picked_up:
+            if actions["smoke"]:
+                self.smoke.rect.centerx = self.player.rect.centerx
+                self.smoke.rect.centery = self.player.rect.centery
+                self.smoke.add(self.camera_group)
+                self.player.smoke_bomb_picked_up = False
 
-
-
+    def check_smoke_bandit_collision(self):
+        for sprite in self.camera_group.sprites():
+                if isinstance(sprite, Bandit):
+                    if self.smoke.alive():
+                        if sprite.check_player_collision(self.smoke):
+                            sprite.smoked = True
+                    else:
+                        sprite.smoked = False
+            
     def update(self, delta_time, actions):
         if actions["escape"]:
             new_state = PauseMenu(self.game)
@@ -189,7 +204,7 @@ class Game_World(State):
 
         self.exit_door.check_collision(self.player, delta_time) #must be called before camera group update so that player direction is correctly set beofore it updates.
         self.check_open_door(actions)
-        self.camera_group.update(delta_time, actions)
+        
 
         self.check_game_over()
 
@@ -197,8 +212,11 @@ class Game_World(State):
 
         self.update_stamina(actions, delta_time)
         self.check_valid_climb(actions, delta_time)
+        self.check_smoke_deploy(actions)
+        self.check_smoke_bandit_collision()
 
         self.instantiate_door()
+        self.camera_group.update(delta_time, actions)
 
     def render(self, display):
         display.fill("black")
