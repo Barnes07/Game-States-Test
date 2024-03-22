@@ -25,8 +25,8 @@ class Game():
         #settings
         self.number_of_artifacts = 10
         self.number_of_total_levels = 5
-        self.number_of_levels_completed = 0
-        self.number_of_bandits = 1
+        self.number_of_levels_completed = 4
+        self.number_of_bandits = 5
 
 
         self.clock = pygame.time.Clock()

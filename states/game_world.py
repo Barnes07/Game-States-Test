@@ -47,6 +47,8 @@ class Game_World(State):
         self.instantiate_badits()
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
         self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
+        self.door_generated = False
+
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
 
         #finding start coordinates
@@ -106,13 +108,13 @@ class Game_World(State):
         self.filled_stamina_bar = pygame.draw.rect(self.game.screen, "green", self.filled_stamina_rect) #draws updated "filled" rectangle 
 
     def check_game_over(self):
-        for sprite in self.camera_group.sprites():
-            if isinstance(sprite, Bandit):
-                if sprite.check_player_collision(self.player):
+        for sprite in self.camera_group.sprites(): #iterate through all sprites in camera group
+            if isinstance(sprite, Bandit): #check if the sprite is a Bandit
+                if sprite.check_player_collision(self.player): #check for collision with player
                     new_state = Game_Over(self.game)
-                    new_state.enter_state()
-                    self.game.number_of_levels_completed = 0
-                    self.number_of_bandits = 1
+                    new_state.enter_state() #enter the "Game_Over" state
+                    self.game.number_of_levels_completed = 0 #reset number of levels completed 
+                    self.game.number_of_bandits = 1 #reset number of bandits
 
     def check_open_door(self, actions):
         if self.exit_door.check_door_proximity(self.player):
@@ -124,9 +126,11 @@ class Game_World(State):
     
     def instantiate_door(self):
         if self.filled_height == self.fill_per_artifact * self.game.number_of_artifacts: #if the loot bag is full
-            self.player.kill()
-            self.exit_door.add(self.camera_group)
-            self.player.add(self.camera_group)
+            if self.door_generated == False:
+                self.player.kill()
+                self.exit_door.add(self.camera_group)
+                self.player.add(self.camera_group)
+                self.door_generated = True
 
 
 
@@ -215,8 +219,13 @@ class Game_World(State):
         self.check_smoke_deploy(actions)
         self.check_smoke_bandit_collision()
 
+        self.player.check_boundary_collision(delta_time)
+
+
         self.instantiate_door()
+        
         self.camera_group.update(delta_time, actions)
+
 
     def render(self, display):
         display.fill("black")

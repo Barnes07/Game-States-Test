@@ -3,6 +3,7 @@ import time
 import pygame 
 import math
 from sprites.wall import Wall
+from sprites.boundary_wall import Boundary_Wall
 
 class Player(pygame.sprite.Sprite):
 
@@ -27,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.previous_position = pygame.math.Vector2()
 
         self.artifacts_collected = 0
-        self.flute_picked_up = True
+        self.flute_picked_up = False
         self.smoke_bomb_picked_up = False
 
     def animate(self, delta_time, x_direction, y_direction):
@@ -111,6 +112,20 @@ class Player(pygame.sprite.Sprite):
 
     def set_coordinates(self, x, y):
         self.rect = self.image_holder.get_rect(center = (x, y))
+
+    def check_boundary_collision(self, delta_time):
+        for sprite in self.group.sprites(): #iterate through all sprites 
+            check = isinstance(sprite, Boundary_Wall) #assign boolean value depending on if the sprite is a boundary wall or not
+            if check == True:
+                if pygame.sprite.collide_rect(self, sprite): #if the player and a boundary wall is colliding
+                    if sprite.rect.collidepoint(self.rect.centerx, self.rect.centery + self.game.block_size) or sprite.rect.collidepoint(self.rect.centerx, self.rect.centery - self.game.block_size):
+                        #if player is colliding with boundary wall in the y plane
+                        self.rect.y -= self.speed * self.direction.y * delta_time #reverse player movement in y direction
+                    if sprite.rect.collidepoint(self.rect.centerx + self.game.block_size, self.rect.centery) or sprite.rect.collidepoint(self.rect.centerx - self.game.block_size, self.rect.centery):
+                        #if the player is colliding with boundary wall in the x plane
+                        self.rect.x -= self.speed * self.direction.x * delta_time #reverse player movement in x direction
+
+
 
     def update(self, delta_time, actions):
         velocity_x = self.rect.centerx - self.previous_position.x

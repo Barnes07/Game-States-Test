@@ -2,6 +2,7 @@ import random
 from map_generation.map_generator import MapGernerator
 from sprites.floor import Floor
 from sprites.wall import Wall
+from sprites.boundary_wall import Boundary_Wall
 
 
 class Cellular_Automata(MapGernerator):
@@ -36,10 +37,12 @@ class Cellular_Automata(MapGernerator):
                 if map[x][y] == 0: 
                     wall = Wall(x*self.block_size, y*self.block_size, self.camera_group, self.game) #instantiate wall class
                 
-
                 elif map[x][y] == 1:
                     floor = Floor(x*self.block_size, y*self.block_size, self.camera_group, self.game) #instantiate floor class
-                    
+
+                elif map[x][y] == 2: 
+                    boundary_wall = Boundary_Wall(x*self.block_size, y*self.block_size, self.camera_group, self.game) #instantiate wall class
+                   
     def cellular_automata(self, noise_grid, iterations):
         for count in range (0, iterations):
             #iterate the algorithm for the number of iterations specified
@@ -69,9 +72,9 @@ class Cellular_Automata(MapGernerator):
         for x in range(0, self.actual_map_width):
             for y in range(0, self.actual_map_height):
                 if x == 0 or x == self.actual_map_width-1:
-                    map[x][y] = 0
+                    map[x][y] = 2
                 if y == 0 or y == self.actual_map_height-1:
-                    map[x][y] = 0
+                    map[x][y] = 2
         return(map)
     
     def check_map_validity(self):
