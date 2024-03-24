@@ -27,6 +27,7 @@ class Game():
         self.number_of_total_levels = 5
         self.number_of_levels_completed = 4
         self.number_of_bandits = 5
+        self.bandit_difficulty = 0 # 0 = easy, 1 = medium, 2 = hard
 
 
         self.clock = pygame.time.Clock()

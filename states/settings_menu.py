@@ -22,9 +22,22 @@ class SettingsMenu(State):
 
        #artifact number settings
         self.artifacts_10_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-500, 100, 100)
+        self.artifacts_10_rect.center = ((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-500)
         self.artifacts_15_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-500, 100, 100)
+        self.artifacts_15_rect.center = ((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-500)
         self.artifacts_20_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-500, 100, 100)
+        self.artifacts_20_rect.center = ((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-500)
         self.artifacts_25_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) + 150, (self.game.SCREEN_HEIGHT)-500, 100, 100)
+        self.artifacts_25_rect.center = ((self.game.SCREEN_WIDTH//2) + 150, (self.game.SCREEN_HEIGHT)-500)
+
+        #AI difficulty settings
+        self.difficulty_easy_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-350, 100, 100)
+        self.difficulty_easy_rect.center = ((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-350)
+        self.difficulty_medium_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-350, 100, 100)
+        self.difficulty_medium_rect.center = ((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-350)
+        self.difficulty_hard_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350, 100, 100)
+        self.difficulty_hard_rect.center = ((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350)
+
         
     
         
@@ -36,26 +49,34 @@ class SettingsMenu(State):
                 self.index = 1
                 self.click_sound.play()
             
-            if self.artifacts_10_rect.collidepoint(actions["mouse_pos"]):
+            elif self.artifacts_10_rect.collidepoint(actions["mouse_pos"]):
                 self.click_sound.play()
                 self.game.number_of_artifacts = 10
-                print(self.game.number_of_artifacts)
-            
-            if self.artifacts_15_rect.collidepoint(actions["mouse_pos"]):
+
+            elif self.artifacts_15_rect.collidepoint(actions["mouse_pos"]):
                 self.click_sound.play()
                 self.game.number_of_artifacts = 15
-                print(self.game.number_of_artifacts)
-                
-            
-            if self.artifacts_20_rect.collidepoint(actions["mouse_pos"]):
+
+            elif self.artifacts_20_rect.collidepoint(actions["mouse_pos"]):
                 self.click_sound.play()
                 self.game.number_of_artifacts = 20
-                print(self.game.number_of_artifacts)
-            
-            if self.artifacts_25_rect.collidepoint(actions["mouse_pos"]):
+
+            elif self.artifacts_25_rect.collidepoint(actions["mouse_pos"]):
                 self.click_sound.play()
                 self.game.number_of_artifacts = 25
-                print(self.game.number_of_artifacts)
+                
+            elif self.difficulty_easy_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.bandit_difficulty = 0
+            
+            elif self.difficulty_medium_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.bandit_difficulty = 1
+
+            elif self.difficulty_hard_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.bandit_difficulty = 2
+
 
                 
             
@@ -80,7 +101,10 @@ class SettingsMenu(State):
         self.artifacts_20 = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2 + 50, (self.game.SCREEN_HEIGHT)-500, 100, 100, "20", "white", "black")
         self.artifacts_25 = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH)//2 + 150, (self.game.SCREEN_HEIGHT)-500, 100, 100, "25", "white", "black")
 
-        
+        self.number_of_artifacts_box = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 300, (self.game.SCREEN_HEIGHT)-350, 200, 100, "Difficulty:", "white", "black")
+        self.difficulty_easy = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-350, 100, 100, "Easy", "white", "black")
+        self.difficulty_medium = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-350, 100, 100, "Medium", "white", "black")
+        self.difficulty_hard = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350, 100, 100, "Hard", "white", "black")
 
 
 

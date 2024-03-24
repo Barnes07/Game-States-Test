@@ -14,11 +14,10 @@ class Bandit(Enemy):
         self.y = 2282
         self.current_image = pygame.image.load(os.path.join(self.game.assets_dir, "sprites", "bandit", "bandit.png")).convert_alpha()
         self.rect = self.current_image.get_rect(center = (self.x, self.y))
-        self.speed = 200
+
 
         #pathfinding
-        self.detection_radius = 2000 
-        self.chase_radius = 250
+        self.set_difficulty()
         
 
         #map dimensions
@@ -27,7 +26,6 @@ class Bandit(Enemy):
 
         #waypoints
         self.time_since_last_move = 0
-        self.time_to_move_to_waypoint = 1
         self.current_waypoint = 0
         self.waypoints = []
         self.actual_pos = pygame.math.Vector2(self.rect.centerx//self.game.block_size, self.rect.centery//self.game.block_size)
@@ -44,6 +42,7 @@ class Bandit(Enemy):
         if distance_to_player <= self.detection_radius:
             #if the player is within the detection radius
             check = True
+            print("detected at a distance of: ", distance_to_player)
         return(check)
 
     def heuristic(self, start, end):
@@ -115,6 +114,7 @@ class Bandit(Enemy):
         if distance_to_player <= self.chase_radius:
             #if player is within the chase radius of the bandit
             check = True
+            print("chased at a distance of: ", distance_to_player)
         return(check)
 
     def follow_waypoints(self, delta_time):
@@ -188,6 +188,49 @@ class Bandit(Enemy):
         else:
             return(False)
     
+    def player_noise(self, actions):
+        if actions["start"]:
+            self.detection_radius += 1000
+            self.chase_radius += 250
+        else:
+            self.detection_radius = 2000
+            self.chase_radius = 250
+
+    def set_difficulty(self):
+        if self.game.bandit_difficulty == 1:
+            self.detection_radius = 3000
+            self.chase_radius = 500
+            self.speed = 250
+            self.time_to_move_to_waypoint = 0.5
+            print("detection_radius:", self.detection_radius)
+            print("chase_radius: ", self.chase_radius)
+            print("speed: ", self.speed)
+            print("time to waypoint: ", self.time_to_move_to_waypoint)
+
+        elif self.game.bandit_difficulty == 2:
+            self.detection_radius = 3500
+            self.chase_radius = 600
+            self.speed = 300
+            self.time_to_move_to_waypoint = 0.25
+            print("detection_radius:", self.detection_radius)
+            print("chase_radius: ", self.chase_radius)
+            print("speed: ", self.speed)
+            print("time to waypoint: ", self.time_to_move_to_waypoint)
+
+        else:
+            self.detection_radius = 2000
+            self.chase_radius = 250
+            self.speed = 200
+            self.time_to_move_to_waypoint = 1
+            print("detection_radius:", self.detection_radius)
+            print("chase_radius: ", self.chase_radius)
+            print("speed: ", self.speed)
+            print("time to waypoint: ", self.time_to_move_to_waypoint)
+
+        
+
+
+
     def check_play_flute(self, actions):
         if actions["flute"]:
             #if the "f" key has been pressed
@@ -205,6 +248,8 @@ class Bandit(Enemy):
         #velocity will always need to be calculated at the start of the update method as it needs to be accurate for the current frame
 
         self.check_play_flute(actions)
+
+        self.player_noise(actions)
 
         if self.charmed == False and self.smoked == False:
             #if the bandit is not charmed, chase the player
