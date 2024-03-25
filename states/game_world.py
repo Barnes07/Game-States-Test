@@ -46,7 +46,7 @@ class Game_World(State):
 
         self.instantiate_badits()
         self.exit_door = Exit_Door(self.game, self, self.camera_group)
-        self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
+        #self.exit_door.kill() #remove door from camera group so it cannot be seen until all of the artifacts have been collected.
         self.door_generated = False
 
         self.player = Player(self.game, self.camera_group, self)#Player must always be the last sprite to be added to the camera group. Otherwise it will be rendered underneath the other sprites and will not be seen by the user. This was encountered during testing.
@@ -54,6 +54,8 @@ class Game_World(State):
         #finding start coordinates
         self.player.find_start_coordinates(self.map.final_map)
         self.exit_door.get_random_starting_coordinates(self.map.final_map)
+  
+
 
         #loot bag
         self.filled_height = 0
@@ -96,6 +98,7 @@ class Game_World(State):
         for bandit in range(0, self.game.number_of_bandits):
             bandit = Bandit(self.game, self.camera_group, self.actual_map_width, self.actual_map_height, self)
             bandit.find_start_coordinates(self.map.final_map)
+
 
     def draw_loot_bag(self):
         self.loot_bag = pygame.draw.rect(self.game.screen, "grey", self.loot_bag_rect) #background, grey part of loot bag

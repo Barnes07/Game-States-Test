@@ -42,7 +42,7 @@ class Bandit(Enemy):
         if distance_to_player <= self.detection_radius:
             #if the player is within the detection radius
             check = True
-            print("detected at a distance of: ", distance_to_player)
+
         return(check)
 
     def heuristic(self, start, end):
@@ -114,7 +114,6 @@ class Bandit(Enemy):
         if distance_to_player <= self.chase_radius:
             #if player is within the chase radius of the bandit
             check = True
-            print("chased at a distance of: ", distance_to_player)
         return(check)
 
     def follow_waypoints(self, delta_time):
@@ -189,12 +188,34 @@ class Bandit(Enemy):
             return(False)
     
     def player_noise(self, actions):
-        if actions["start"]:
-            self.detection_radius += 1000
-            self.chase_radius += 250
+        if self.game.bandit_difficulty == 1:
+            if actions["start"]:
+                self.detection_radius = 3500
+                self.chase_radius = 600
+            else:
+                self.detection_radius = 3000
+                self.chase_radius = 500
+        elif self.game.bandit_difficulty == 2:
+            if actions["start"]:
+                self.detection_radius = 4000
+                self.chase_radius = 650
+            else:
+                self.detection_radius = 3500
+                self.chase_radius = 600
         else:
-            self.detection_radius = 2000
-            self.chase_radius = 250
+            if actions["start"]:
+                self.detection_radius = 3000
+                self.chase_radius = 500
+            else:
+                self.detection_radius = 2000
+                self.chase_radius = 250
+
+
+
+
+                
+
+
 
     def set_difficulty(self):
         if self.game.bandit_difficulty == 1:

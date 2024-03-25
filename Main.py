@@ -26,13 +26,12 @@ class Game():
         self.number_of_artifacts = 10
         self.number_of_total_levels = 5
         self.number_of_levels_completed = 4
-        self.number_of_bandits = 5
+        self.number_of_bandits = 1
         self.bandit_difficulty = 0 # 0 = easy, 1 = medium, 2 = hard
 
 
         self.clock = pygame.time.Clock()
 
-       
     def game_loop(self):
         while self.playing == True:
             self.get_delta_time()
@@ -124,6 +123,7 @@ class Game():
         self.main_menu_screen = Main_Menu(self)
         self.states_stack.append(self.main_menu_screen)
 
+print("Enemy charmed at a distance of 299.27489408612520")
 if __name__ == "__main__":
     g = Game()
     while g.running == True:
