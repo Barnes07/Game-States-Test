@@ -38,6 +38,16 @@ class SettingsMenu(State):
         self.difficulty_hard_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350, 100, 100)
         self.difficulty_hard_rect.center = ((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350)
 
+        #Map size settings
+        self.map_small_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-200, 100, 100)
+        self.map_small_rect.center = ((self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-200)
+        self.map_medium_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-200, 100, 100)
+        self.map_medium_rect.center = ((self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-200)
+        self.map_large_rect = pygame.Rect((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-200, 100, 100)
+        self.map_large_rect.center = ((self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-200)
+
+
+
         
     
         
@@ -76,6 +86,18 @@ class SettingsMenu(State):
             elif self.difficulty_hard_rect.collidepoint(actions["mouse_pos"]):
                 self.click_sound.play()
                 self.game.bandit_difficulty = 2
+            
+            elif self.map_small_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.map_size = 40
+            
+            elif self.map_medium_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.map_size = 50
+            
+            elif self.map_large_rect.collidepoint(actions["mouse_pos"]):
+                self.click_sound.play()
+                self.game.map_size = 60
 
 
                 
@@ -106,6 +128,9 @@ class SettingsMenu(State):
         self.difficulty_medium = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-350, 100, 100, "Medium", "white", "black")
         self.difficulty_hard = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-350, 100, 100, "Hard", "white", "black")
 
-
+        self.map_size_box =self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 300, (self.game.SCREEN_HEIGHT)-200, 200, 100, "Map Size:", "white", "black")
+        self.map_small = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 150, (self.game.SCREEN_HEIGHT)-200, 100, 100, "Small", "white", "black")
+        self.map_medium = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) - 50, (self.game.SCREEN_HEIGHT)-200, 100, 100, "Medium", "white", "black")
+        self.map_large = self.game.text(self.game.screen, (self.game.SCREEN_WIDTH//2) + 50, (self.game.SCREEN_HEIGHT)-200, 100, 100, "Large", "white", "black")
 
         

@@ -25,8 +25,8 @@ class Game_World(State):
         self.camera_group = CameraGroup(self.game)
 
         #Map
-        self.actual_map_width = 50
-        self.actual_map_height = 50
+        self.actual_map_width = self.game.map_size
+        self.actual_map_height = self.game.map_size
         self.wall_density = 61
         self.wall_count_variable = 4
         self.iterations = 4
